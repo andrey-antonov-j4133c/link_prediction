@@ -1,0 +1,8 @@
+/.idea
+/.venv
+/.vscode
+*.txt
+/ef_gen_h0
+/ef_gen_tr
+/OLP/Benchmark
+OLP/Images

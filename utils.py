@@ -32,10 +32,10 @@ def top_k(classifier, feature_names, k, test_df):
 
     for element, goal in zip(sum(X1[['prob']].T.values.tolist(), []), sum(X2[['goal']].T.values.tolist(),[])):
         if goal == 0:
-            if element in d0.keys(): d0[element] += 1
+            if element in d0: d0[element] += 1
             else: d0[element] = 1
         elif goal == 1:
-            if element in d1.keys(): d1[element] += 1
+            if element in d1: d1[element] += 1
             else: d1[element] = 1
 
     df0 = pd.DataFrame(list(d0.items()), columns = ['prob', 'count'])
