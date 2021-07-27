@@ -7,7 +7,7 @@ import scipy.sparse as sparse
 from OLP.Code import OLP as OLP_
 
 class OLP:
-    def __init__(self) -> None:
+    def __init__(self, network_index=0) -> None:
         self.feature_names = ['com_ne', 'short_path', 'LHN', 'page_rank_pers_edges', 'pref_attach', 'jacc_coeff', 'adam_adar', 'res_alloc_ind', 'svd_edges', 'svd_edges_dot', 'svd_edges_mean']
 
         infile = open('OLP/Benchmark/OLP_updated.pickle','rb')  
@@ -15,7 +15,7 @@ class OLP:
         df = df.sort_values(by=['number_edges'], ascending=False)
 
         df_edgelists = df['edges_id']
-        edges_orig = df_edgelists.iloc[0]
+        edges_orig = df_edgelists.iloc[network_index]
         self.calc_features(edges_orig)
 
     def calc_features(self, edges_orig):
