@@ -113,10 +113,10 @@ def sample_true_false_edges(A_orig, A_tr, A_ho):
 	    edge_f.append((ne_ho[0][edge_f_idx_aux],ne_ho[1][edge_f_idx_aux]))
 	
 	# store for later use
-    if not os.path.isdir("./edge_tf_tr/"):
-	    os.mkdir("./edge_tf_tr/")
-    np.savetxt("./edge_tf_tr/edge_t.txt",edge_t,fmt='%u')
-    np.savetxt("./edge_tf_tr/edge_f.txt",edge_f,fmt='%u')
+    if not os.path.isdir("./data/OLP/edge_tf_tr/"):
+	    os.mkdir("./data/OLP/edge_tf_tr/")
+    np.savetxt("./data/OLP/edge_tf_tr/edge_t.txt",edge_t,fmt='%u')
+    np.savetxt("./data/OLP/edge_tf_tr/edge_f.txt",edge_f,fmt='%u')
     
     A_diff = A_orig - A_ho
     e_diff = sparse.find(sparse.triu(A_diff,1)) # true candidates
@@ -132,10 +132,10 @@ def sample_true_false_edges(A_orig, A_tr, A_ho):
         edge_f.append((ne_orig[0][edge_f_idx_aux],ne_orig[1][edge_f_idx_aux]))
     
     # store for later use
-    if not os.path.isdir("./edge_tf_ho/"):
-        os.mkdir("./edge_tf_ho/")
-    np.savetxt("./edge_tf_ho/edge_t.txt",edge_t,fmt='%u')
-    np.savetxt("./edge_tf_ho/edge_f.txt",edge_f,fmt='%u')
+    if not os.path.isdir("./data/OLP/edge_tf_ho/"):
+        os.mkdir("./data/OLP/edge_tf_ho/")
+    np.savetxt("./data/OLP/edge_tf_ho/edge_t.txt",edge_t,fmt='%u')
+    np.savetxt("./data/OLP/edge_tf_ho/edge_f.txt",edge_f,fmt='%u')
 
 
 def gen_topol_feats(A_orig, A, edge_s): 
@@ -727,7 +727,7 @@ def heldout_performance(path_to_data, path_to_results, n_depth, n_est):
     if not os.path.isdir(path_to_results):
         os.mkdir(path_to_results)
     f = open(path_to_results + '/RF_Best_metrics.txt','w')
-    path_to_data = './feature_metrices'
+    path_to_data = './data/OLP/feature_metrices'
     
     # read data
     X_train = np.load(path_to_data+'/X_Eseen.npy')
@@ -813,23 +813,23 @@ def demo():
     
     #### extract features #####
     sample_true_false_edges(A_orig, A_tr, A_ho)
-    edge_t_tr = np.loadtxt("./edge_tf_tr/edge_t.txt").astype('int')
-    edge_f_tr = np.loadtxt("./edge_tf_tr/edge_f.txt").astype('int')
+    edge_t_tr = np.loadtxt("./data/OLP/edge_tf_tr/edge_t.txt").astype('int')
+    edge_f_tr = np.loadtxt("./data/OLP/edge_tf_tr/edge_f.txt").astype('int')
     df_f_tr = gen_topol_feats(A_orig, A_tr, edge_f_tr)
     df_t_tr = gen_topol_feats(A_orig, A_tr, edge_t_tr)
     
-    edge_t_ho = np.loadtxt("./edge_tf_ho/edge_t.txt").astype('int')
-    edge_f_ho = np.loadtxt("./edge_tf_ho/edge_f.txt").astype('int')
+    edge_t_ho = np.loadtxt("./data/OLP/edge_tf_ho/edge_t.txt").astype('int')
+    edge_f_ho = np.loadtxt("./data/OLP/edge_tf_ho/edge_f.txt").astype('int')
     df_f_ho = gen_topol_feats(A_orig, A_ho, edge_f_ho)
     df_t_ho = gen_topol_feats(A_orig, A_ho, edge_t_ho)
     
-    feat_path = "./ef_gen_tr/"
+    feat_path = "./data/OLP/ef_gen_tr/"
     if not os.path.isdir(feat_path):
         os.mkdir(feat_path)
     df_t_tr.to_pickle(feat_path + 'df_t')
     df_f_tr.to_pickle(feat_path + 'df_f')
     
-    feat_path = "./ef_gen_ho/"
+    feat_path = "./data/OLP/ef_gen_ho/"
     if not os.path.isdir(feat_path):
         os.mkdir(feat_path)
     df_t_ho.to_pickle(feat_path + 'df_t')
@@ -841,13 +841,13 @@ def demo():
     df_ho = creat_full_set(df_t_ho,df_f_ho)
     
     #### creat and save feature matrices #### 
-    dir_output = './feature_metrices'  # output path
+    dir_output = './data/OLP/feature_metrices'  # output path
     creat_numpy_files(dir_output, df_ho, df_tr)
     
     
     #### perform model selection #### 
-    path_to_data = './feature_metrices' 
-    path_to_results = './results'
+    path_to_data = './data/OLP/feature_metrices' 
+    path_to_results = './data/OLP/results'
     n_depths = [3, 6] # here is a sample search space
     n_ests = [25, 50, 100] # here is a sample search space
     n_depth, n_est = model_selection(path_to_data, path_to_results, n_depths, n_ests)
@@ -892,23 +892,23 @@ def topol_stacking(edges_orig):
     
     #### extract features #####
     sample_true_false_edges(A_orig, A_tr, A_ho)
-    edge_t_tr = np.loadtxt("./edge_tf_tr/edge_t.txt").astype('int')
-    edge_f_tr = np.loadtxt("./edge_tf_tr/edge_f.txt").astype('int')
+    edge_t_tr = np.loadtxt("./data/OLP/edge_tf_tr/edge_t.txt").astype('int')
+    edge_f_tr = np.loadtxt("./data/OLP/edge_tf_tr/edge_f.txt").astype('int')
     df_f_tr = gen_topol_feats(A_orig, A_tr, edge_f_tr)
     df_t_tr = gen_topol_feats(A_orig, A_tr, edge_t_tr)
     
-    edge_t_ho = np.loadtxt("./edge_tf_ho/edge_t.txt").astype('int')
-    edge_f_ho = np.loadtxt("./edge_tf_ho/edge_f.txt").astype('int')
+    edge_t_ho = np.loadtxt("./data/OLP/edge_tf_ho/edge_t.txt").astype('int')
+    edge_f_ho = np.loadtxt("./data/OLP/edge_tf_ho/edge_f.txt").astype('int')
     df_f_ho = gen_topol_feats(A_orig, A_ho, edge_f_ho)
     df_t_ho = gen_topol_feats(A_orig, A_ho, edge_t_ho)
     
-    feat_path = "./ef_gen_tr/"
+    feat_path = "./data/OLP/ef_gen_tr/"
     if not os.path.isdir(feat_path):
         os.mkdir(feat_path)
     df_t_tr.to_pickle(feat_path + 'df_t')
     df_f_tr.to_pickle(feat_path + 'df_f')
     
-    feat_path = "./ef_gen_ho/"
+    feat_path = "./data/OLP/ef_gen_ho/"
     if not os.path.isdir(feat_path):
         os.mkdir(feat_path)
     df_t_ho.to_pickle(feat_path + 'df_t')
@@ -920,13 +920,13 @@ def topol_stacking(edges_orig):
     df_ho = creat_full_set(df_t_ho,df_f_ho)
     
     #### creat and save feature matrices #### 
-    dir_output = './feature_metrices'  # output path
+    dir_output = './data/OLP/feature_metrices'  # output path
     creat_numpy_files(dir_output, df_ho, df_tr)
     
     
     #### perform model selection #### 
-    path_to_data = './feature_metrices' 
-    path_to_results = './results'
+    path_to_data = './data/OLP/feature_metrices' 
+    path_to_results = './data/OLP/results'
     n_depths = [3, 6] # here is a sample search space
     n_ests = [25, 50, 100] # here is a sample search space
     n_depth, n_est = model_selection(path_to_data, path_to_results, n_depths, n_ests)
