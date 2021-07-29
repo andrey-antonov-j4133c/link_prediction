@@ -1,15 +1,22 @@
-import pickle  
+import pickle
+from typing import Generator  
 import pandas as pd
 import numpy as np
 
 from scipy.sparse import csr_matrix
 import scipy.sparse as sparse
 
+from lib.generators.generator_base import Generator
 from lib.generators.OLP_ import *
 
-class OLP:
-    def __init__(self, network_index=0) -> None:
-        self.feature_names = ['com_ne', 'short_path', 'LHN', 'page_rank_pers_edges', 'pref_attach', 'jacc_coeff', 'adam_adar', 'res_alloc_ind', 'svd_edges', 'svd_edges_dot', 'svd_edges_mean']
+class OLP(Generator):
+    def __init__(
+            self, 
+            feature_names = ['com_ne', 'short_path', 'LHN', 'page_rank_pers_edges', 'pref_attach', 'jacc_coeff', 'adam_adar', 'res_alloc_ind', 'svd_edges', 'svd_edges_dot', 'svd_edges_mean'],
+            features_to_normalize = ['com_ne', 'short_path', 'pref_attach', 'svd_edges_dot'],
+            network_index=0) -> None:
+
+        self.feature_names = feature_names
 
         infile = open('./data/OLP/OLP_updated.pickle','rb')  
         df = pickle.load(infile)  
@@ -17,9 +24,9 @@ class OLP:
 
         df_edgelists = df['edges_id']
         edges_orig = df_edgelists.iloc[network_index]
-        self.calc_features(edges_orig)
+        self.calc_features(edges_orig, features_to_normalize)
 
-    def calc_features(self, edges_orig):
+    def calc_features(self, edges_orig, features_to_normalize):
         edges_orig = np.array(np.matrix(edges_orig))
         num_nodes = int(np.max(edges_orig)) + 1
         row = np.array(edges_orig)[:,0]
@@ -64,12 +71,5 @@ class OLP:
         )
 
         # normalize
-        f_to_norm = ['com_ne', 'short_path', 'pref_attach', 'svd_edges_dot']
-        self.features_df[f_to_norm] = (self.features_df[f_to_norm]-self.features_df[f_to_norm].min())/(self.features_df[f_to_norm].max()-self.features_df[f_to_norm].min())
-        
-
-    def get_df(self) -> pd.DataFrame:
-        return self.df
-
-    def get_features_df(self) -> pd.DataFrame:
-        return self.features_df
+        for column in features_to_normalize:
+            self.features_df[column] = (self.features_df[column]-self.features_df[column].min())/(self.features_df[column].max()-self.features_df[column].min())

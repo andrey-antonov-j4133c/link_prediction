@@ -2,3 +2,5 @@ pandas
 numpy
 networkx
 scikit-learn
+matplotlib
+pickle

@@ -18,3 +18,6 @@ class RandomForestOnFeatures:
 
     def accuracy_score(self, X_test, Y_test):
         return self.forest.score(X_test, Y_test)
+
+    def get_model(self):
+        return self.forest
