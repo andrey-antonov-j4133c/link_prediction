@@ -14,17 +14,27 @@ class OLP(Generator):
             self, 
             feature_names = ['com_ne', 'short_path', 'LHN', 'page_rank_pers_edges', 'pref_attach', 'jacc_coeff', 'adam_adar', 'res_alloc_ind', 'svd_edges', 'svd_edges_dot', 'svd_edges_mean'],
             features_to_normalize = ['com_ne', 'short_path', 'pref_attach', 'svd_edges_dot'],
-            network_index=0) -> None:
+            network_index=0, seed=0) -> None:
 
         self.feature_names = feature_names
 
+        print('Loading file...')
         infile = open('./data/OLP/OLP_updated.pickle','rb')  
-        df = pickle.load(infile)  
-        df = df.sort_values(by=['number_edges'], ascending=False)
-
-        df_edgelists = df['edges_id']
+        networks_df = pickle.load(infile)
+        networks_df = networks_df.sort_values(by=['number_edges'], ascending=False)
+        df_edgelists = networks_df['edges_id']
         edges_orig = df_edgelists.iloc[network_index]
-        self.calc_features(edges_orig, features_to_normalize)
+        print('File loaded!')
+
+        print('Calculating features...')
+        features_df = self.calc_features(edges_orig, features_to_normalize)
+        print('Features calculated!')
+
+        print('Train/test splitting...')
+        self.TRAIN1_DF, self.TEST1_DF, self.TEST2_DF = self.sample_edges(features_df, seed)
+        print('Done splitting the data!')
+
+
 
     def calc_features(self, edges_orig, features_to_normalize):
         edges_orig = np.array(np.matrix(edges_orig))
@@ -60,16 +70,39 @@ class OLP(Generator):
 
         ground_truth_df = ground_truth_df[['node1', 'node2', 'goal']]
 
-        ground_truth_df0 = ground_truth_df[ground_truth_df['goal'] == 0].sample(n)
-        ground_truth_df1 = ground_truth_df[ground_truth_df['goal'] == 1].sample(n)
+        ground_truth_df0 = ground_truth_df[ground_truth_df['goal'] == 0]
+        ground_truth_df1 = ground_truth_df[ground_truth_df['goal'] == 1]
 
-        self.df = pd.concat([ground_truth_df0, ground_truth_df1])
+        df = pd.concat([ground_truth_df0, ground_truth_df1], ignore_index=True)
 
-        self.features_df = self.df[['node1', 'node2']].merge(
+        features_df = df[['node1', 'node2', 'goal']].merge(
             df_tr[['i', 'j'] + self.feature_names].rename(columns={'i': 'node1', 'j': 'node2'}),
             how='inner'
         )
 
         # normalize
         for column in features_to_normalize:
-            self.features_df[column] = (self.features_df[column]-self.features_df[column].min())/(self.features_df[column].max()-self.features_df[column].min())
+            features_df[column] = (features_df[column]-features_df[column].min())/(features_df[column].max()-features_df[column].min())
+        
+        return features_df
+
+    def sample_edges(self, df, seed, tr1=0.7, ts1=0.15):
+        # randomly choosing tr1% (70% by default) of all edges
+        df_tr_1 = df.sample(n=int(len(df)*tr1), random_state=seed)
+
+        remainder = pd.concat([df, df_tr_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
+
+        # balancing the edges and non-edges
+        min_length = np.min([len(df_tr_1[df_tr_1['goal'] == 0]), len(df_tr_1[df_tr_1['goal'] == 1])])
+        df_tr_1 = pd.concat([\
+            df_tr_1[df_tr_1['goal'] == 0].sample(n=min_length, random_state=seed),\
+            df_tr_1[df_tr_1['goal'] == 1].sample(n=min_length, random_state=seed)],\
+            ignore_index=True)
+
+        # randomly choosing ts1% (15% by default) of all edges
+        df_ts_1 = remainder.sample(n=int(len(df)*ts1), random_state=seed, ignore_index=True)
+
+        # the rest is test 2
+        df_ts_2 = pd.concat([remainder, df_ts_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
+
+        return df_tr_1, df_ts_1, df_ts_2
