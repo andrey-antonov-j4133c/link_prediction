@@ -14,16 +14,23 @@ class OLP(Generator):
             self, 
             feature_names = ['com_ne', 'short_path', 'LHN', 'page_rank_pers_edges', 'pref_attach', 'jacc_coeff', 'adam_adar', 'res_alloc_ind', 'svd_edges', 'svd_edges_dot', 'svd_edges_mean'],
             features_to_normalize = ['com_ne', 'short_path', 'pref_attach', 'svd_edges_dot'],
-            network_index=0, seed=0) -> None:
+            network_index=0, seed=0, network_name=None) -> None:
 
         self.feature_names = feature_names
 
         print('Loading file...')
         infile = open('./data/OLP/OLP_updated.pickle','rb')  
         networks_df = pickle.load(infile)
-        networks_df = networks_df.sort_values(by=['number_edges'], ascending=False)
-        df_edgelists = networks_df['edges_id']
-        edges_orig = df_edgelists.iloc[network_index]
+
+        if network_name is None:
+            networks_df = networks_df.sort_values(by=['number_edges'], ascending=False)
+            df_edgelists = networks_df['edges_id']
+            edges_orig = df_edgelists.iloc[network_index]
+        else:
+            networks_df = networks_df[networks_df['network_name'] == network_name].head(1)
+            df_edgelists = networks_df['edges_id']
+            edges_orig = df_edgelists.iloc[0]
+
         print('File loaded!')
 
         print('Calculating features...')
