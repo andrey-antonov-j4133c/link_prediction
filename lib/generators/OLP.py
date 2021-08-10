@@ -23,13 +23,19 @@ class OLP(Generator):
         networks_df = pickle.load(infile)
 
         if network_name is None:
-            networks_df = networks_df.sort_values(by=['number_edges'], ascending=False)
+            networks_df = networks_df.sort_values(by=['number_edges'], ascending=False).head(1)
             df_edgelists = networks_df['edges_id']
             edges_orig = df_edgelists.iloc[network_index]
         else:
             networks_df = networks_df[networks_df['network_name'] == network_name].head(1)
             df_edgelists = networks_df['edges_id']
             edges_orig = df_edgelists.iloc[0]
+
+        print('Network info:\n')
+        for itm in ['title', 'description', 'networkDomain', 'subDomain', 'citation', 'sourceUrl']:
+            print(f'{itm}: {networks_df[itm].values[0]}')
+
+        print()
 
         print('File loaded!')
 
