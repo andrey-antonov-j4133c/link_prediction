@@ -12,13 +12,4 @@ Example of feature generation:
   <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/features.png">
 </p>
 
-Then run a link prediction model and classify the the link-predictions. We divide the error value into 4 labels (great: [0; 0.25], good: [0.25; 0.5], ok: [0.5, 0.75], poor: [0.75, 1]).
-Here is a distribution of ABS-error of one of one of the models:
-<p align="left">
-  <img width="800"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/error_distribution.png">
-</p>
-
-Finaly we learn on the quality classes and topological features and later try to predict the quality class based on the features:
-<p align="left">
-  <img width="800"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/conf_matrix.png">
-</p>
+Then run a link prediction model and classify the link-predictions.
