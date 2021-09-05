@@ -10,7 +10,7 @@ In this paper, we study how the observed quality of a network link prediction mo
 ## Experiments
 
 <p align="left">
-  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/pipeline.png">
+  <img width="800"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/pipeline.png">
 </p>
 
 
@@ -19,7 +19,7 @@ We run experiments on synthetic and real networks to establish the quality of pr
 We split the data in the following way:
 
 <p align="left">
-  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/data_spit.png">
+  <img width="400"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/data_spit.png">
 </p>
 
 Then we run our first model, to reconstruct links between nodes, based on the features. Based on the absolute prediction error we then train the next model to give us prediction quality (1-good, 0-bad).
@@ -27,11 +27,11 @@ Then we run our first model, to reconstruct links between nodes, based on the fe
 We also calculate feature importance for each classifier and network, and look at the distribution of each feature:
 
 <p align="left">
-  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/feature_imp.png">
+  <img width="800"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/feature_imp.png">
 </p>
 
 <p align="left">
-  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/feature_dist.png">
+  <img width="800"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/feature_dist.png">
 </p>
 
 
