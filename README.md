@@ -1,15 +1,42 @@
 # Link prediction quality classes
 
-In this work we attempt to learn quality classes of link prediction model based on topological features. We use different link prediciton models to predict edges&
-Then we use edge-based topological features of like Jacard coefficent to predict witch edges will be restored by the model with good quality, and witch will not. 
+This work is an addition to the paper "Link predictability classes in complex networks" by Stavinova et al.
 
-We currently use the following networks and features:
-- LFR benchmark graph and couple of simple features from NetworkX (LFR_Forest-pred_Logi-class.ipynp)
-- Real networks from Optomal Link prediction (https://github.com/Aghasemian/OptimalLinkPrediction) and their features
+## Abstract
 
-Example of feature generation:
+In this paper, we study how the observed quality of a network link prediction model applied to a part of a network can be further used for the analysis of the whole network. Namely, we first show that it can be determined for a part of the network which topological features of node pairs lead to a certain level of link prediction quality. Based on it, we construct a link predictability (prediction quality) classifier for the network links. This is further used in the other part of the network for controlling the link prediction quality typical for the model on the par- ticular network. The actual prediction model is not used then already. Experiments with synthetic and real-world networks show a good per- formance of the proposed pipeline.
+
+
+## Experiments
+
 <p align="left">
-  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/features.png">
+  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/pipeline.png">
 </p>
 
-Then run a link prediction model and classify the link-predictions.
+
+We run experiments on synthetic and real networks to establish the quality of predicting a spesific edge in a graph, using topological features (such as Jaccard’s coefficient, Adamic-Adar index and others) as input.
+
+We split the data in the following way:
+
+<p align="left">
+  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/data_spit.png">
+</p>
+
+Then we run our first model, to reconstruct links between nodes, based on the features. Based on the absolute prediction error we then train the next model to give us prediction quality (1-good, 0-bad).
+
+We also calculate feature importance for each classifier and network, and look at the distribution of each feature:
+
+<p align="left">
+  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/feature_imp.png">
+</p>
+
+<p align="left">
+  <img width="500"src="https://raw.githubusercontent.com/andrey-antonov-j4133c/link_prediction/master/images/feature_dist.png">
+</p>
+
+
+## Instation
+
+```
+pip install requirements.txt
+```
