@@ -2,8 +2,6 @@ numpy
 pandas
 scipy
 networkx
-math
-random
 tensorflow
 tensorflow_gpu
 seaborn
