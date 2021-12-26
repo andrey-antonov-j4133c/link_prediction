@@ -1,7 +1,12 @@
-pandas
 numpy
+pandas
+scipy
 networkx
+math
+random
+tensorflow
+tensorflow_gpu
+seaborn
 scikit-learn
 matplotlib
-pickle
-seaborn
+logging
