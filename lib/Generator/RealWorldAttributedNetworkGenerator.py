@@ -75,7 +75,7 @@ class RealWorldAttributedNetorkGeberator(Generator):
         
 
 
-    def _sample_edges(self, G_edges, CG_edges, seed, tr1=0.7, ts1=0.15, OLD=False):
+    def _sample_edges(self, G_edges, CG_edges, seed, tr1=0.7, ts1=0.15, OLD=True):
         log.info('Train/test splitting the data...')
 
         df1 = pd.DataFrame()
