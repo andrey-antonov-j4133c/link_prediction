@@ -8,5 +8,5 @@ EMBED_DIM = 32
 RANDOM_SEED = 0
 VEBROSE=True
 
-RESULT_PATH = './results/'
-DATA_PATH = './data/'
+RESULT_PATH = 'link_prediction/results/'
+DATA_PATH = 'link_prediction/data/'

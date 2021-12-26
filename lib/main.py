@@ -18,11 +18,11 @@ def __main__():
         shutil.rmtree(RESULT_PATH)
 
     experiments = [
-        Experiment(RealWorldAttributedNetorkGeberator(), {'path': './data/', 'dataset_name': 'citeseer'}),
-        Experiment(RealWorldAttributedNetorkGeberator(), {'path': './data/', 'dataset_name': 'cora_ml'}),
-        Experiment(RealWorldAttributedNetorkGeberator(), {'path': './data/', 'dataset_name': 'cora'}),
-        Experiment(RealWorldAttributedNetorkGeberator(), {'path': './data/', 'dataset_name': 'dblp'}),
-        Experiment(RealWorldAttributedNetorkGeberator(), {'path': './data/', 'dataset_name': 'pubmed'})
+        Experiment(RealWorldAttributedNetorkGeberator(), {'path': DATA_PATH, 'dataset_name': 'citeseer'}),
+        Experiment(RealWorldAttributedNetorkGeberator(), {'path': DATA_PATH, 'dataset_name': 'cora_ml'}),
+        Experiment(RealWorldAttributedNetorkGeberator(), {'path': DATA_PATH, 'dataset_name': 'cora'}),
+        Experiment(RealWorldAttributedNetorkGeberator(), {'path': DATA_PATH, 'dataset_name': 'dblp'}),
+        Experiment(RealWorldAttributedNetorkGeberator(), {'path': DATA_PATH, 'dataset_name': 'pubmed'})
     ]
 
     for i, e in enumerate(experiments):
