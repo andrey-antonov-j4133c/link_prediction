@@ -9,7 +9,7 @@ from Generator.RealWorldAttributedNetworkGenerator import RealWorldAttributedNet
 
 def __main__():
     if VEBROSE:
-        log.basicConfig(format="%(levelname)s: %(message)s", level=log.DEBUG)
+        log.basicConfig(format="%(levelname)s: %(message)s", level=log.INFO)
         log.info("Verbose output.")
     else:
         log.basicConfig(format="%(levelname)s: %(message)s")
