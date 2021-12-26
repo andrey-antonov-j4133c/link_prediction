@@ -6,7 +6,7 @@ EPOCH=5
 EMBED_DIM = 32
 
 RANDOM_SEED = 0
-VEBROSE=True
+VEBROSE = False
 
 RESULT_PATH = 'link_prediction/results/'
 DATA_PATH = 'link_prediction/data/'
