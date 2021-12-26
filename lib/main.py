@@ -28,5 +28,6 @@ def __main__():
     for i, e in enumerate(experiments):
         os.makedirs(RESULT_PATH + str(i) + '/')
         e.run(i)
+        experiments[i].generator = None
 
 __main__()
