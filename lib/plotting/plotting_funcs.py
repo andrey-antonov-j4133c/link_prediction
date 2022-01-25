@@ -1,11 +1,9 @@
-import seaborn as sns
-import matplotlib.pyplot as plt
 import matplotlib as mpl
-
-from sklearn.metrics import roc_curve, auc
-
-import tensorflow.keras.backend as K
+import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+import tensorflow.keras.backend as K
+from sklearn.metrics import roc_curve, auc
 
 
 def plot_auc(df, x='goal', y='prob', path=None):

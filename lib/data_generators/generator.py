@@ -1,9 +1,10 @@
-from SETTINGS import *
+import logging as log
 
 import networkx as nx
 import numpy as np
 import pandas as pd
-import logging as log
+
+from SETTINGS import *
 
 
 class Generator:
@@ -65,27 +66,27 @@ class Generator:
 
         if OLD:
             # randomly choosing tr1% (70% by default) of all edges
-            df_tr_1 = df.sample(n=int(len(df)*tr1), random_state=seed)
+            df_tr_1 = df.sample(n=int(len(df) * tr1), random_state=seed)
             remainder = pd.concat([df, df_tr_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
             # balancing the edges and non-edges
             min_length = np.min([len(df_tr_1[df_tr_1['goal'] == 0]), len(df_tr_1[df_tr_1['goal'] == 1])])
-            df_tr_1 = pd.concat([\
-                df_tr_1[df_tr_1['goal'] == 0].sample(n=min_length, random_state=seed),\
-                df_tr_1[df_tr_1['goal'] == 1].sample(n=min_length, random_state=seed)],\
+            df_tr_1 = pd.concat([ \
+                df_tr_1[df_tr_1['goal'] == 0].sample(n=min_length, random_state=seed), \
+                df_tr_1[df_tr_1['goal'] == 1].sample(n=min_length, random_state=seed)], \
                 ignore_index=True)
         else:
             # balancing the edges and non-edges
             min_length = np.min([len(df[df['goal'] == 0]), len(df[df['goal'] == 1])])
-            df = pd.concat([\
-                df[df['goal'] == 0].sample(n=min_length, random_state=seed),\
-                df[df['goal'] == 1].sample(n=min_length, random_state=seed)],\
+            df = pd.concat([ \
+                df[df['goal'] == 0].sample(n=min_length, random_state=seed), \
+                df[df['goal'] == 1].sample(n=min_length, random_state=seed)], \
                 ignore_index=True)
             # randomly choosing tr1% (70% by default) of all edges
-            df_tr_1 = df.sample(n=int(len(df)*tr1), random_state=seed)
+            df_tr_1 = df.sample(n=int(len(df) * tr1), random_state=seed)
             remainder = pd.concat([df, df_tr_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
 
         # randomly choosing ts1% (15% by default) of all edges
-        df_ts_1 = remainder.sample(n=int(len(df)*ts1), random_state=seed, ignore_index=True)
+        df_ts_1 = remainder.sample(n=int(len(df) * ts1), random_state=seed, ignore_index=True)
         # the rest is test 2
         df_ts_2 = pd.concat([remainder, df_ts_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
 
@@ -105,7 +106,7 @@ class Generator:
             to = df['node2'].values
             edges = [(frm[i], to[i]) for i in range(len(frm))]
             features = [f[2] for f in functions[feature](G, edges)]
-            
+
             df[feature] = pd.Series(features)
             if feature in features_to_normalize:
                 df[feature] -= df[feature].min()
@@ -113,7 +114,7 @@ class Generator:
 
         return df
 
-    def _read_data(self, args:dict):
+    def _read_data(self, args: dict):
         pass
 
     def get_data(self) -> dict:

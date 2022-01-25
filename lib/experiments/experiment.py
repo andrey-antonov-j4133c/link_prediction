@@ -1,16 +1,13 @@
-from data_generators import generator
-
-from SETTINGS import *
-
-from models.model import model
-from data.data_arrange import data_arrange
-from plotting.plotting_funcs import *
-
-from tensorflow.keras.utils import plot_model
+import math
 
 import pandas as pd
+from tensorflow.keras.utils import plot_model
 
-import math
+from SETTINGS import *
+from data.data_arrange import data_arrange
+from data_generators import generator
+from models.model import model
+from plotting.plotting_funcs import *
 
 
 class Experiment:

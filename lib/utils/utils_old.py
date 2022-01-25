@@ -1,8 +1,5 @@
-from math import e
-import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-from collections import Counter
+import pandas as pd
 
 
 def convert_nx_to_dataframe(G, Compl_G, n_samples=500):
@@ -30,22 +27,28 @@ def top_k(classifier, feature_names, k, test_df):
     d0 = {}
     d1 = {}
 
-    for element, goal in zip(sum(X1[['prob']].T.values.tolist(), []), sum(X2[['goal']].T.values.tolist(),[])):
+    for element, goal in zip(sum(X1[['prob']].T.values.tolist(), []), sum(X2[['goal']].T.values.tolist(), [])):
         if goal == 0:
-            if element in d0: d0[element] += 1
-            else: d0[element] = 1
+            if element in d0:
+                d0[element] += 1
+            else:
+                d0[element] = 1
         elif goal == 1:
-            if element in d1: d1[element] += 1
-            else: d1[element] = 1
+            if element in d1:
+                d1[element] += 1
+            else:
+                d1[element] = 1
 
-    df0 = pd.DataFrame(list(d0.items()), columns = ['prob', 'count'])
-    df1 = pd.DataFrame(list(d1.items()), columns = ['prob', 'count'])
+    df0 = pd.DataFrame(list(d0.items()), columns=['prob', 'count'])
+    df1 = pd.DataFrame(list(d1.items()), columns=['prob', 'count'])
 
-
-    return score, df0, df1, top[['node1', 'node2', 'prob']].merge(test_df[['node1', 'node2', 'goal']], on=['node1','node2'])
+    return score, df0, df1, top[['node1', 'node2', 'prob']].merge(test_df[['node1', 'node2', 'goal']],
+                                                                  on=['node1', 'node2'])
 
 
 def plot_bars(df0, df1, bins):
-    pd.cut(df0['prob'], bins=bins, include_lowest=True).value_counts(sort=False).plot.bar(rot=0, color='steelblue', alpha=.5, label='0')
-    pd.cut(df1['prob'], bins=bins, include_lowest=True).value_counts(sort=False).plot.bar(rot=0, color='firebrick', alpha=.5, label='1')
+    pd.cut(df0['prob'], bins=bins, include_lowest=True).value_counts(sort=False).plot.bar(rot=0, color='steelblue',
+                                                                                          alpha=.5, label='0')
+    pd.cut(df1['prob'], bins=bins, include_lowest=True).value_counts(sort=False).plot.bar(rot=0, color='firebrick',
+                                                                                          alpha=.5, label='1')
     plt.legend()

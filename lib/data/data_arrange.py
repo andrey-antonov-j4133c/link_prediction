@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+
 
 def data_arrange(df, feature_names, train=True, attrs=True, goal='goal'):
     x_features = df[feature_names].values

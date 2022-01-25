@@ -1,12 +1,11 @@
+import logging as log
 import os
 import shutil
 
 from SETTINGS import *
-import logging as log
-
-from experiments.experiment import Experiment
 from data_generators.real_world_attributed_networks import RealWorldAttrGenerator
 from data_generators.synthetic_attributed_networks import SyntheticAttrGenerator
+from experiments.experiment import Experiment
 
 
 def __main__():
@@ -21,15 +20,15 @@ def __main__():
 
     experiments = [
         Experiment(RealWorldAttrGenerator(
-                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})),
+            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})),
         Experiment(RealWorldAttrGenerator(
-                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})),
+            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})),
         Experiment(RealWorldAttrGenerator(
-                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'})),
+            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'})),
         Experiment(RealWorldAttrGenerator(
-                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'})),
+            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'})),
         Experiment(RealWorldAttrGenerator(
-                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})),
+            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})),
         Experiment(SyntheticAttrGenerator(
             {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'citeseer'})),
         Experiment(SyntheticAttrGenerator(

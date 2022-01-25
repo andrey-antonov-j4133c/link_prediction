@@ -12,14 +12,14 @@ def data_split(df, features_df):
     remainder = pd.concat([df, link_prediction_train, link_prediction_train]).drop_duplicates(keep=False)
 
     link_prediction_test = pd.concat([
-        remainder[remainder['goal'] == 0].sample(l), 
+        remainder[remainder['goal'] == 0].sample(l),
         remainder[remainder['goal'] == 1].sample(l)
     ])
 
     remainder = pd.concat([df, link_prediction_test, link_prediction_test]).drop_duplicates(keep=False)
 
     classifier_test = pd.concat([
-        remainder[remainder['goal'] == 0].sample(l), 
+        remainder[remainder['goal'] == 0].sample(l),
         remainder[remainder['goal'] == 1].sample(l)
     ])
 
