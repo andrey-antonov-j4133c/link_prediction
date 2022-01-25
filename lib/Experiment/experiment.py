@@ -3,7 +3,6 @@ import logging as log
 
 from SETTINGS import *
 
-
 from Keras.model import model
 from Data.data_arrange import data_arrange
 from Plotting.plotting_funcs import *
@@ -15,12 +14,11 @@ import pandas as pd
 import math
 
 class Experiment:
-    def __init__(self, generator: Generator, generator_args: dict) -> None:
+    def __init__(self, generator: Generator) -> None:
         self.generator = generator
-        self.generator_args = generator_args
 
     def run(self, exp_num):
-        self.generator.load_data(self.generator_args)
+        self.generator.load_data()
         data = self.generator.get_data()
 
         data['train_1'].dropna(inplace=True)
