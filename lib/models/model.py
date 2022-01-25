@@ -9,11 +9,11 @@ def model(feature_names, attr_dim, attrs=True, embed_dim=32, hidden_dim=32):
     """
 
     # inputs to topological features
-    feature_input = Input(shape=(len(feature_names), ), name='Topological features input')
+    feature_input = Input(shape=(len(feature_names),), name='Topological features input')
 
     # node_attributes inputs
-    attr_input_1 = Input(shape=(attr_dim, ), name='Node 1 attributes') if attr_dim > 0 else None
-    attr_input_2 = Input(shape=(attr_dim, ), name='Node 2 attributes') if attr_dim > 0 else None
+    attr_input_1 = Input(shape=(attr_dim,), name='Node 1 attributes') if attr_dim > 0 else None
+    attr_input_2 = Input(shape=(attr_dim,), name='Node 2 attributes') if attr_dim > 0 else None
 
     # dynamic representation the attributes
     c = l.Concatenate()([attr_input_1, attr_input_2])

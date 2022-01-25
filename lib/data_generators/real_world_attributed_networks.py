@@ -2,12 +2,10 @@ import logging as log
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from Generator.Generator import Generator
-
-from SETTINGS import *
+from generator import Generator
 
 
-class RealWorldAttributedNetorkGeberator(Generator):
+class RealWorldAttrGenerator(Generator):
     def __init__(self, args: dict) -> None:
         super().__init__(args)
         self.A, self.H, self.y = self._read_data({'path': args['path'] + args['dataset_name']})
@@ -30,4 +28,3 @@ class RealWorldAttributedNetorkGeberator(Generator):
             log.info('Success!')
 
             return A.toarray(), [tuple(i) for i in H.toarray()], y
-        

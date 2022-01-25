@@ -1,12 +1,13 @@
 import os
 import shutil
 
-from SETTINGS import * 
+from SETTINGS import *
 import logging as log
 
-from Experiment.experiment import Experiment
-from Generator.RealWorldAttributedNetworkGenerator import RealWorldAttributedNetorkGeberator
-from Generator.ReplicatedAttributedNetworkGenerator import ReplicatedAttributedNetworkGenerator
+from experiments.experiment import Experiment
+from data_generators.real_world_attributed_networks import RealWorldAttrGenerator
+from data_generators.synthetic_attributed_networks import SyntheticAttrGenerator
+
 
 def __main__():
     if VEBROSE:
@@ -19,24 +20,38 @@ def __main__():
         shutil.rmtree(RESULT_PATH)
 
     experiments = [
-        #Experiment(RealWorldAttributedNetorkGeberator({'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})),
-        #Experiment(RealWorldAttributedNetorkGeberator({'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})),
-        #Experiment(RealWorldAttributedNetorkGeberator({'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'})),
-        #Experiment(RealWorldAttributedNetorkGeberator({'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'})),
-        #Experiment(RealWorldAttributedNetorkGeberator({'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})),
-        Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/acMark/', 'dataset_name': 'citeseer'})),
-        #Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/acMark/', 'dataset_name': 'cora_ml'})),
-        #Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/acMark/', 'dataset_name': 'pubmed'})),
-        #Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/cabam/', 'dataset_name': 'citeseer'})),
-        #Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/cabam/', 'dataset_name': 'cora'})),
-        #Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/cabam/', 'dataset_name': 'cora_ml'})),
-        #Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/cabam/', 'dataset_name': 'polblogs'})),
-        #Experiment(ReplicatedAttributedNetworkGenerator({'path': DATA_PATH+'replicated_data/cabam/', 'dataset_name': 'pubmed'}))
+        Experiment(RealWorldAttrGenerator(
+                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})),
+        Experiment(RealWorldAttrGenerator(
+                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})),
+        Experiment(RealWorldAttrGenerator(
+                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'})),
+        Experiment(RealWorldAttrGenerator(
+                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'})),
+        Experiment(RealWorldAttrGenerator(
+                {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'citeseer'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'cora_ml'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'pubmed'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'citeseer'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'cora'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'cora_ml'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'polblogs'})),
+        Experiment(SyntheticAttrGenerator(
+            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'pubmed'}))
     ]
 
     for i, e in enumerate(experiments):
         os.makedirs(RESULT_PATH + str(i) + '/')
         e.run(i)
         experiments[i].generator = None
+
 
 __main__()

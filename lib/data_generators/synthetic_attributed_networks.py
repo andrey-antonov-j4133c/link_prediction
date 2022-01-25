@@ -1,16 +1,16 @@
 import numpy as np
-from Generator.Generator import Generator
+from generator import Generator
 
 
-class ReplicatedAttributedNetworkGenerator(Generator):
+class SyntheticAttrGenerator(Generator):
     def __init__(self, args: dict) -> None:
         super().__init__(args)
         self.A, self.H, self.y = self._read_data({'path': args['path'] + args['dataset_name']})
 
     def _read_data(self, args):
-        n_lines = sum(1 for line in open(args['path']+'/G.csv'))-3
+        n_lines = sum(1 for line in open(args['path'] + '/G.csv')) - 3
         A = np.ndarray((n_lines, n_lines))
-        with open(args['path']+'/G.csv') as f:
+        with open(args['path'] + '/G.csv') as f:
             for line in f.readlines():
                 if line[0] == '#':
                     continue
@@ -20,7 +20,7 @@ class ReplicatedAttributedNetworkGenerator(Generator):
                     A[i][j] = 1 if j in index else 0
 
         H = []
-        with open(args['path']+'/Features.csv') as f:
+        with open(args['path'] + '/Features.csv') as f:
             for line in f.readlines():
                 H.append(tuple(float(s) for s in line.split(',')))
 

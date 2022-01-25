@@ -9,7 +9,6 @@ import numpy as np
 
 
 def plot_auc(df, x='goal', y='prob', path=None):
-
     mpl.rcParams['figure.figsize'] = [8, 5]
     mpl.rcParams['figure.dpi'] = 125
 
@@ -30,10 +29,10 @@ def plot_auc(df, x='goal', y='prob', path=None):
 def feature_importance(model, feature_names, embed_dim, layer_name='Hidden_layer', attrs=True, path=None):
     def plot(x, y):
         sns.barplot(
-            x=x, 
-            y=y, 
+            x=x,
+            y=y,
             label='Reconstruction feature importance',
-            color='lightcoral', 
+            color='lightcoral',
             alpha=1
         )
 
@@ -48,12 +47,12 @@ def feature_importance(model, feature_names, embed_dim, layer_name='Hidden_layer
 
     layer = model.get_layer(layer_name)
     if attrs:
-        zero_tensor = K.constant(np.zeros((1, len(feature_names)+embed_dim)))
+        zero_tensor = K.constant(np.zeros((1, len(feature_names) + embed_dim)))
     else:
         zero_tensor = K.constant(np.zeros((1, len(feature_names))))
 
     if attrs:
-        x = feature_names + ['{}'.format(i+1) for i in range(embed_dim)]
+        x = feature_names + ['{}'.format(i + 1) for i in range(embed_dim)]
     else:
         x = feature_names
     y = K.eval(layer(zero_tensor))
