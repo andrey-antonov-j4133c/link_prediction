@@ -14,3 +14,5 @@ DATA_PATH = 'link_prediction/data/'
 
 RESULT_PATH = './results/'
 DATA_PATH = './data/'
+
+OLP_PATH = './data/real_world_data/OLP/OLP_updated.pickle'
