@@ -7,3 +7,4 @@ tensorflow_gpu
 seaborn
 scikit-learn
 matplotlib
+powerlaw

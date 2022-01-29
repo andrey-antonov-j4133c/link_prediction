@@ -1,11 +1,11 @@
 import numpy as np
 
-from generator import Generator
+from data_formatting.formatter import Formatter
 
 
-class SyntheticAttrGenerator(Generator):
-    def __init__(self, args: dict) -> None:
-        super().__init__(args)
+class SyntheticFormatter(Formatter):
+    def __init__(self, args: dict, attributed) -> None:
+        super().__init__(args, attributed)
         self.A, self.H, self.y = self._read_data({'path': args['path'] + args['dataset_name']})
 
     def _read_data(self, args):
@@ -20,9 +20,11 @@ class SyntheticAttrGenerator(Generator):
                 for j in range(n_lines):
                     A[i][j] = 1 if j in index else 0
 
-        H = []
-        with open(args['path'] + '/Features.csv') as f:
-            for line in f.readlines():
-                H.append(tuple(float(s) for s in line.split(',')))
+        H = None
+        if self.attributed:
+            H = []
+            with open(args['path'] + '/Features.csv') as f:
+                for line in f.readlines():
+                    H.append(tuple(float(s) for s in line.split(',')))
 
         return A, H, None

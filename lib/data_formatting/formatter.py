@@ -4,26 +4,25 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
-from SETTINGS import *
+from settings import *
 
 
-class Generator:
-    def __init__(self, args: dict) -> None:
+class Formatter:
+    def __init__(self, args: dict, attributed=True) -> None:
         self.A = None
         self.H = None
         self.y = None
-        self.DATA = {}
+
+        self.attributed = attributed
 
     def load_data(self) -> None:
-        self.TOPOLOGICAL_FEATURE_NAMES = TOPOLOGICAL_FEATURE_NAMES
-
         G = nx.convert_matrix.from_numpy_matrix(self.A)
         G.remove_edges_from(nx.selfloop_edges(G))
         CG = nx.complement(G)
 
         TRAIN1, TEST1, TEST2 = self._sample_edges(G.edges, CG.edges, RANDOM_SEED)
 
-        if USE_ATTRIBUTES:
+        if self.attributed:
             TRAIN1['node_1_attrs'] = TRAIN1['node1'].apply(lambda x: self.H[x])
             TRAIN1['node_2_attrs'] = TRAIN1['node2'].apply(lambda x: self.H[x])
 
@@ -36,13 +35,13 @@ class Generator:
         if len(TOPOLOGICAL_FEATURE_NAMES) > 0:
             log.info(f'Calculating topological features: {TOPOLOGICAL_FEATURE_NAMES}')
 
-            TRAIN1 = self._calculate_features(TRAIN1, G, TOPOLOGICAL_FEATURE_NAMES, TOPOLOGICAL_FEATURES_TO_NORMALIZE)
-            TEST1 = self._calculate_features(TEST1, G, TOPOLOGICAL_FEATURE_NAMES, TOPOLOGICAL_FEATURES_TO_NORMALIZE)
-            TEST2 = self._calculate_features(TEST2, G, TOPOLOGICAL_FEATURE_NAMES, TOPOLOGICAL_FEATURES_TO_NORMALIZE)
+            TRAIN1 = self._calculate_features(TRAIN1, G)
+            TEST1 = self._calculate_features(TEST1, G)
+            TEST2 = self._calculate_features(TEST2, G)
 
             log.info('Done calculating topological features')
 
-        self.DATA = {
+        return {
             'train_1': TRAIN1,
             'test_1': TEST1,
             'test_2': TEST2
@@ -64,26 +63,16 @@ class Generator:
 
         df = pd.concat([df1, df0], ignore_index=True)
 
-        if OLD:
-            # randomly choosing tr1% (70% by default) of all edges
-            df_tr_1 = df.sample(n=int(len(df) * tr1), random_state=seed)
-            remainder = pd.concat([df, df_tr_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
-            # balancing the edges and non-edges
-            min_length = np.min([len(df_tr_1[df_tr_1['goal'] == 0]), len(df_tr_1[df_tr_1['goal'] == 1])])
-            df_tr_1 = pd.concat([ \
-                df_tr_1[df_tr_1['goal'] == 0].sample(n=min_length, random_state=seed), \
-                df_tr_1[df_tr_1['goal'] == 1].sample(n=min_length, random_state=seed)], \
-                ignore_index=True)
-        else:
-            # balancing the edges and non-edges
-            min_length = np.min([len(df[df['goal'] == 0]), len(df[df['goal'] == 1])])
-            df = pd.concat([ \
-                df[df['goal'] == 0].sample(n=min_length, random_state=seed), \
-                df[df['goal'] == 1].sample(n=min_length, random_state=seed)], \
-                ignore_index=True)
-            # randomly choosing tr1% (70% by default) of all edges
-            df_tr_1 = df.sample(n=int(len(df) * tr1), random_state=seed)
-            remainder = pd.concat([df, df_tr_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
+        # balancing the edges and non-edges
+        min_length = np.min([len(df[df['goal'] == 0]), len(df[df['goal'] == 1])])
+        df = pd.concat([
+            df[df['goal'] == 0].sample(n=min_length, random_state=seed),
+            df[df['goal'] == 1].sample(n=min_length, random_state=seed)],
+            ignore_index=True)
+
+        # randomly choosing tr1% (70% by default) of all edges
+        df_tr_1 = df.sample(n=int(len(df) * tr1), random_state=seed)
+        remainder = pd.concat([df, df_tr_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
 
         # randomly choosing ts1% (15% by default) of all edges
         df_ts_1 = remainder.sample(n=int(len(df) * ts1), random_state=seed, ignore_index=True)
@@ -93,7 +82,7 @@ class Generator:
         log.info('Success!')
         return df_tr_1, df_ts_1, df_ts_2
 
-    def _calculate_features(self, df, G, TOPOLOGICAL_FEATURE_NAMES, features_to_normalize):
+    def _calculate_features(self, df, G):
         functions = {
             'RAI': nx.resource_allocation_index,
             'JC': nx.jaccard_coefficient,
@@ -101,14 +90,14 @@ class Generator:
             'PA': nx.preferential_attachment
         }
 
-        for feature in TOPOLOGICAL_FEATURE_NAMES:
+        for feature, function in functions.items():
             frm = df['node1'].values
             to = df['node2'].values
             edges = [(frm[i], to[i]) for i in range(len(frm))]
-            features = [f[2] for f in functions[feature](G, edges)]
+            features = [f[2] for f in function(G, edges)]
 
             df[feature] = pd.Series(features)
-            if feature in features_to_normalize:
+            if feature in TOPOLOGICAL_FEATURES_TO_NORMALIZE:
                 df[feature] -= df[feature].min()
                 df[feature] /= df[feature].max()
 
@@ -116,6 +105,3 @@ class Generator:
 
     def _read_data(self, args: dict):
         pass
-
-    def get_data(self) -> dict:
-        return self.DATA

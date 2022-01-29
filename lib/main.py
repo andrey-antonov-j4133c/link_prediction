@@ -2,9 +2,15 @@ import logging as log
 import os
 import shutil
 
-from SETTINGS import *
-from data_generators.real_world_attributed_networks import RealWorldAttrGenerator
-from data_generators.synthetic_attributed_networks import SyntheticAttrGenerator
+from models.nn_model import NNModel
+from models.gb_model import GBModel
+
+from settings import *
+
+from data_formatting.real_world_attributed_networks import RealWorldAttrFormatter
+from data_formatting.synthetic_networks import SyntheticFormatter
+from data_formatting.real_world_non_attributed_networks import RealWorldNonAttrFormatter
+
 from experiments.experiment import Experiment
 
 
@@ -18,39 +24,61 @@ def __main__():
     if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
         shutil.rmtree(RESULT_PATH)
 
-    experiments = [
-        Experiment(RealWorldAttrGenerator(
-            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})),
-        Experiment(RealWorldAttrGenerator(
-            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})),
-        Experiment(RealWorldAttrGenerator(
-            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'})),
-        Experiment(RealWorldAttrGenerator(
-            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'})),
-        Experiment(RealWorldAttrGenerator(
-            {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'citeseer'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'cora_ml'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'pubmed'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'citeseer'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'cora'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'cora_ml'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'polblogs'})),
-        Experiment(SyntheticAttrGenerator(
-            {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'pubmed'}))
+    #experiments = [
+    #    Experiment(RealWorldAttrFormatter(
+    #        {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})),
+    #    Experiment(RealWorldAttrFormatter(
+    #        {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})),
+    #    Experiment(RealWorldAttrFormatter(
+    #        {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'})),
+    #    Experiment(RealWorldAttrFormatter(
+    #        {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'})),
+    #    Experiment(RealWorldAttrFormatter(
+    #        {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'citeseer'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'cora_ml'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/acMark/', 'dataset_name': 'pubmed'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'citeseer'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'cora'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'cora_ml'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'polblogs'})),
+    #    Experiment(SyntheticAttrFormatter(
+    #        {'path': DATA_PATH + 'replicated_data/cabam/', 'dataset_name': 'pubmed'}))
+    #]
+
+    data = [
+        (RealWorldNonAttrFormatter, Experiment, GBModel,
+         False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
+        (RealWorldNonAttrFormatter, Experiment, GBModel,
+         False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
+        (RealWorldNonAttrFormatter, Experiment, GBModel,
+         False, {'dataset_name': '595b15bd549f067e0263b525'}),
+        #(RealWorldNonAttrFormatter, Experiment, NNModel,
+        # False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
+        #(RealWorldAttrFormatter, Experiment, NNModel,
+        # True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
+        #(SyntheticFormatter, Experiment, NNModel,
+        # True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=1;p=1;b=0.1;s=0;o=0.2'}),
+        #(SyntheticFormatter, Experiment, NNModel,
+        # False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'})
     ]
 
-    for i, e in enumerate(experiments):
-        os.makedirs(RESULT_PATH + str(i) + '/')
-        e.run(i)
-        experiments[i].generator = None
+    for i, (formatter, experiment, model, attributed, args) in enumerate(data):
+        experiment_path = f"exp #{i+1}, {args['dataset_name']}, attributed is {attributed}, model: {model.MODEL_TYPE}"
+        os.makedirs(RESULT_PATH + experiment_path + '/')
+
+        log.info('STARTING EXPERIMENT')
+        log.info(experiment_path)
+
+        e = experiment(formatter(args, attributed), model)
+        e.run(attributed, experiment_path)
 
 
 __main__()

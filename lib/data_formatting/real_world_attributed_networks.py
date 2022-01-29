@@ -3,12 +3,12 @@ import logging as log
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from generator import Generator
+from data_formatting.formatter import Formatter
 
 
-class RealWorldAttrGenerator(Generator):
-    def __init__(self, args: dict) -> None:
-        super().__init__(args)
+class RealWorldAttrFormatter(Formatter):
+    def __init__(self, args: dict, attributed) -> None:
+        super().__init__(args, attributed)
         self.A, self.H, self.y = self._read_data({'path': args['path'] + args['dataset_name']})
 
     def _read_data(self, args: dict):

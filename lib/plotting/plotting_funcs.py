@@ -1,9 +1,13 @@
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
+
+import numpy as np
+
 import tensorflow.keras.backend as K
 from sklearn.metrics import roc_curve, auc
+
+from settings import *
 
 
 def plot_auc(df, x='goal', y='prob', path=None):
@@ -24,7 +28,7 @@ def plot_auc(df, x='goal', y='prob', path=None):
         plt.clf()
 
 
-def feature_importance(model, feature_names, embed_dim, layer_name='Hidden_layer', attrs=True, path=None):
+def feature_importance_keras(model, layer_name='Hidden_layer', attrs=True, path=None):
     def plot(x, y):
         sns.barplot(
             x=x,
@@ -45,14 +49,14 @@ def feature_importance(model, feature_names, embed_dim, layer_name='Hidden_layer
 
     layer = model.get_layer(layer_name)
     if attrs:
-        zero_tensor = K.constant(np.zeros((1, len(feature_names) + embed_dim)))
+        zero_tensor = K.constant(np.zeros((1, len(TOPOLOGICAL_FEATURE_NAMES) + EMBED_DIM)))
     else:
-        zero_tensor = K.constant(np.zeros((1, len(feature_names))))
+        zero_tensor = K.constant(np.zeros((1, len(TOPOLOGICAL_FEATURE_NAMES))))
 
     if attrs:
-        x = feature_names + ['{}'.format(i + 1) for i in range(embed_dim)]
+        x = TOPOLOGICAL_FEATURE_NAMES + ['{}'.format(i + 1) for i in range(EMBED_DIM)]
     else:
-        x = feature_names
+        x = TOPOLOGICAL_FEATURE_NAMES
     y = K.eval(layer(zero_tensor))
 
     if attrs:
@@ -62,3 +66,29 @@ def feature_importance(model, feature_names, embed_dim, layer_name='Hidden_layer
     mpl.rcParams['figure.dpi'] = 125
 
     plot(x, y[0])
+
+
+def feature_importance_gb(importance_pd, name, path=None):
+    mpl.rcParams['figure.figsize'] = [6, 4]
+    mpl.rcParams['figure.dpi'] = 125
+
+    fig, ax = plt.subplots()
+
+    sns.barplot(
+        data=importance_pd,
+        x=TOPOLOGICAL_FEATURE_NAMES,
+        y='FI',
+        label='Feature importance',
+        ax=ax,
+        color='lightcoral',
+        alpha=1
+    )
+
+    ax.set_title("Feature importance using MDI")
+    ax.set_ylabel("Mean decrease in impurity")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=40, ha="right")
+    ax.legend()
+
+    if path:
+        plt.savefig(path)
+        plt.clf()
