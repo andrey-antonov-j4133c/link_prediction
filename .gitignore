@@ -8,7 +8,7 @@
 /ef_gen_ho
 
 /results
-/data
+/data/pre_computed
 
 experiments_2.ipynb
 olp_networks.ipynb
