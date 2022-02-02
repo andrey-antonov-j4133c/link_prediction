@@ -9,10 +9,8 @@ EMBED_DIM = 32
 RANDOM_SEED = 0
 VEBROSE = True
 
+RESULT_PATH = 'link_prediction/results/'
+DATA_PATH = 'link_prediction/data/'
+
 RESULT_PATH = './results/'
 DATA_PATH = './data/'
-
-SYNTHETIC_PATH = './data/synthetic/'
-OLP_PATH = './data/real_world_data/OLP/OLP_updated.pickle'
-
-PRE_COMPUTED_PATH = './data/pre_computed/'
