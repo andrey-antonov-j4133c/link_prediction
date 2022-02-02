@@ -50,8 +50,8 @@ def __main__():
     else:
         log.basicConfig(format="%(levelname)s: %(message)s")
 
-    if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
-        shutil.rmtree(RESULT_PATH)
+    if not os.path.isdir(PRE_COMPUTED_PATH):
+        os.makedirs(PRE_COMPUTED_PATH)
 
     for formatter_cls, attributed, args in datasets:
         data_path = PRE_COMPUTED_PATH + args['dataset_name'] + '/'
