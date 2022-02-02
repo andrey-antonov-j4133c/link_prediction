@@ -1,6 +1,7 @@
 import numpy as np
 
 from data_formatting.formatter import Formatter
+from data_formatting.formatter_opt import OptFormatter
 
 
 class SyntheticFormatter(Formatter):

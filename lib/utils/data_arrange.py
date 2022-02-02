@@ -1,8 +1,10 @@
 import numpy as np
 
+from settings import *
 
-def data_arrange(df, feature_names, train=True, attrs=True, goal='goal'):
-    x_features = df[feature_names].values
+
+def data_arrange(df, train=True, attrs=True, goal='goal'):
+    x_features = df[TOPOLOGICAL_FEATURE_NAMES].values
 
     x_attrs_1 = np.array([np.array(item) for item in df['node_1_attrs'].values]) if attrs else []
     x_attrs_2 = np.array([np.array(item) for item in df['node_2_attrs'].values]) if attrs else []

@@ -54,10 +54,6 @@ class NNModel(ModelWrapper, ABC):
         else:
             hidden = l.Dense(len(TOPOLOGICAL_FEATURE_NAMES), activation='relu', name='Hidden_layer')(feature_input)
 
-        hidden = l.Dense(32, activation='relu', name='Hidden_layer_1')(hidden)
-        hidden = l.Dense(64, activation='relu', name='Hidden_layer_2')(hidden)
-        hidden = l.Dense(32, activation='relu', name='Hidden_layer_3')(hidden)
-
         out = l.Dense(1, activation='sigmoid', name='output')(hidden)
 
         if self.attributed:

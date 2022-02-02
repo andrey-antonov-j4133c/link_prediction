@@ -54,26 +54,28 @@ def __main__():
     #]
 
     data = [
-        (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
-        (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
-        (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'dataset_name': '595b15bd549f067e0263b525'}),
-        (RealWorldNonAttrFormatter, Experiment, NNModel,
-         False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
-        (RealWorldNonAttrFormatter, Experiment, NNModel,
-         False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
-        (RealWorldNonAttrFormatter, Experiment, NNModel,
-         False, {'dataset_name': '595b15bd549f067e0263b525'}),
+        #(RealWorldNonAttrFormatter, Experiment, GBModel,
+        # False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
+        #(RealWorldNonAttrFormatter, Experiment, GBModel,
+        # False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
+        #(RealWorldNonAttrFormatter, Experiment, GBModel,
+        # False, {'dataset_name': '595b15bd549f067e0263b525'}),
         #(RealWorldNonAttrFormatter, Experiment, NNModel,
         # False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
+        #(RealWorldNonAttrFormatter, Experiment, NNModel,
+        # False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
+        #(RealWorldNonAttrFormatter, Experiment, NNModel,
+        # False, {'dataset_name': '595b15bd549f067e0263b525'}),
         #(RealWorldAttrFormatter, Experiment, NNModel,
         # True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
+        #(RealWorldNonAttrFormatter, Experiment, NNModel,
+        # False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
+        #(RealWorldNonAttrFormatter, Experiment, GBModel,
+        # False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
         #(SyntheticFormatter, Experiment, NNModel,
         # True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=1;p=1;b=0.1;s=0;o=0.2'}),
-        #(SyntheticFormatter, Experiment, NNModel,
-        # False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'})
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'})
     ]
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):

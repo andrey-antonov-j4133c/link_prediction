@@ -1,4 +1,5 @@
 import logging as log
+import os
 
 import networkx as nx
 import numpy as np
@@ -13,9 +14,20 @@ class Formatter:
         self.H = None
         self.y = None
 
+        self.args = args
         self.attributed = attributed
 
-    def load_data(self) -> None:
+    def load_data(self):
+        if self.args['dataset_name'] in os.listdir(PRE_COMPUTED_PATH):
+            log.info('Found data from pre-computed')
+            log.info('Loading data now')
+
+            return {
+                'train_1': pd.read_csv(PRE_COMPUTED_PATH + self.args['dataset_name'] + '/train_1.csv'),
+                'test_1': pd.read_csv(PRE_COMPUTED_PATH + self.args['dataset_name'] + '/test_1.csv'),
+                'test_2': pd.read_csv(PRE_COMPUTED_PATH + self.args['dataset_name'] + '/test_2.csv')
+            }
+
         G = nx.convert_matrix.from_numpy_matrix(self.A)
         G.remove_edges_from(nx.selfloop_edges(G))
         CG = nx.complement(G)
@@ -47,7 +59,7 @@ class Formatter:
             'test_2': TEST2
         }
 
-    def _sample_edges(self, G_edges, CG_edges, seed, tr1=0.7, ts1=0.15, OLD=True):
+    def _sample_edges(self, G_edges, CG_edges, seed, tr1=0.7, ts1=0.15):
         log.info('Train/test splitting the data...')
 
         df1 = pd.DataFrame()
@@ -63,19 +75,21 @@ class Formatter:
 
         df = pd.concat([df1, df0], ignore_index=True)
 
-        # balancing the edges and non-edges
-        min_length = np.min([len(df[df['goal'] == 0]), len(df[df['goal'] == 1])])
-        df = pd.concat([
-            df[df['goal'] == 0].sample(n=min_length, random_state=seed),
-            df[df['goal'] == 1].sample(n=min_length, random_state=seed)],
-            ignore_index=True)
-
         # randomly choosing tr1% (70% by default) of all edges
         df_tr_1 = df.sample(n=int(len(df) * tr1), random_state=seed)
+
         remainder = pd.concat([df, df_tr_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
+
+        # balancing the edges and non-edges
+        min_length = np.min([len(df_tr_1[df_tr_1['goal'] == 0]), len(df_tr_1[df_tr_1['goal'] == 1])])
+        df_tr_1 = pd.concat(
+            [df_tr_1[df_tr_1['goal'] == 0].sample(n=min_length, random_state=seed),
+             df_tr_1[df_tr_1['goal'] == 1].sample(n=min_length, random_state=seed)],
+            ignore_index=True)
 
         # randomly choosing ts1% (15% by default) of all edges
         df_ts_1 = remainder.sample(n=int(len(df) * ts1), random_state=seed, ignore_index=True)
+
         # the rest is test 2
         df_ts_2 = pd.concat([remainder, df_ts_1], ignore_index=True).drop_duplicates(keep=False, ignore_index=True)
 

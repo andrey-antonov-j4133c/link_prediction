@@ -3,7 +3,7 @@ from networkx.generators.community import LFR_benchmark_graph
 
 from settings import *
 
-from data.synthetic.LFR.fixed_params import *
+from data.synthetic.LFR.params import *
 from data.synthetic.helpers import write_network
 
 
@@ -12,11 +12,6 @@ def generate_network(tau1, tau2, mu, average_degree, seed):
 
 
 def main():
-    tau1 = [3]
-    tau2 = [1.5]
-    mu = [0.1]
-    average_degree = [5]
-
     seed = random.randint(0, 1000)
 
     for t1 in tau1:
