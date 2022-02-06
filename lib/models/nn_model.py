@@ -1,65 +1,142 @@
 from abc import ABC
 
-from plotting.plotting_funcs import feature_importance_keras
+import numpy as np
+import pandas as pd
+
+from plotting.plotting_funcs import feature_importance_keras, feature_importance
 from settings import *
 from models.model_wrapper import ModelWrapper
 
 from tensorflow.keras import Input
 from tensorflow.keras import layers as l
 from tensorflow.keras.models import Model
-from tensorflow.keras.utils import plot_model
+from tensorflow.keras.utils import plot_model, Sequence
+
+import shap
 
 
 class NNModel(ModelWrapper, ABC):
     MODEL_TYPE = 'Keras NN model'
 
-    def __init__(self, name, args):
-        super().__init__(name, args)
+    def __init__(self, feature_cols, name, args):
+        super().__init__(feature_cols, name, args)
 
+        self.batch_size = 1024
         self.attr_dim = args['attr_dim']
         self.attributed = args['attributed']
 
         self.model = self.__init_model()
 
-    def fit(self, x, y):
-        self.model.fit(x, y, EPOCH)
+    def fit(self, node_df, y_col):
+        X, y = self.__get_data(node_df, y_col)
+        self.model.fit(X, y, epochs=EPOCH, verbose=1)
 
-    def predict(self, x):
-        return self.model.predict(x).squeeze()
+    def predict(self, node_df):
+        X, _ = self.__get_data(node_df)
+        return self.model.predict(X, verbose=1).squeeze()
 
-    def feature_importance(self, path):
-        feature_importance_keras(
-            self.model,
-            attrs=self.attributed,
+    def feature_importance(self, samples, path):
+        def f(X):
+            return self.model.predict(X)
+
+        X, _ = self.__get_data(samples)
+
+        explainer = shap.KernelExplainer(f, X)
+        shap_values = explainer.shap_values(X, nsamples=FI_PERMUTATIONS)
+
+        importance_pd = pd.DataFrame(
+            shap_values[0],
+            columns=self.__get_cols())
+
+        top_important_features = importance_pd.mean(axis=0).sort_values(ascending=False).head(TOP_K_FEATURES)
+
+        feature_importance(
+            top_important_features,
+            self.name,
             path=RESULT_PATH + path + '/' + f'Feature importance for {self.name}')
+
+        return top_important_features
 
     def plot_model(self, path):
         plot_model(self.model, show_shapes=True, to_file=RESULT_PATH + path + '/' + f'{self.name} model.png')
 
     def __init_model(self):
-        # inputs to topological features
-        feature_input = Input(shape=(len(TOPOLOGICAL_FEATURE_NAMES),), name='Topological features input')
+        input_length = len(self.feature_cols) + (self.attr_dim*2 if self.attributed else 0)
+        input = Input(shape=(input_length,), name='Input')
 
-        # node_attributes inputs
         if self.attributed:
-            attr_input_1 = Input(shape=(self.attr_dim,), name='Node 1 attributes')
-            attr_input_2 = Input(shape=(self.attr_dim,), name='Node 2 attributes')
+            features = l.Lambda(lambda x: x[:, :len(self.feature_cols)])(input)
+            node_1_attrs = l.Lambda(lambda x: x[:, len(self.feature_cols):len(self.feature_cols)+self.attr_dim])(input)
+            node_2_attrs = l.Lambda(lambda x: x[:, len(self.feature_cols) + self.attr_dim:])(input)
 
-            # dynamic representation the attributes
-            c = l.Concatenate()([attr_input_1, attr_input_2])
-            attrs_dyn = l.Dense(EMBED_DIM, activation='relu', name='Dynamic_representation_of_the_attributes')(c)
+            node_1_embed = l.Dense(EMBED_DIM, activation='relu', name='Node_one_embed')(node_1_attrs)
+            node_2_embed = l.Dense(EMBED_DIM, activation='relu', name='Node_two_embed')(node_2_attrs)
 
-            concat = l.Concatenate()([feature_input, attrs_dyn])
-            hidden = l.Dense(EMBED_DIM + len(TOPOLOGICAL_FEATURE_NAMES), activation='relu', name='Hidden_layer')(concat)
+            concat = l.Concatenate()([features, node_1_embed, node_2_embed])
+            hidden = l.Dense(32, activation='relu', name='Hidden_layer')(concat)
         else:
-            hidden = l.Dense(len(TOPOLOGICAL_FEATURE_NAMES), activation='relu', name='Hidden_layer')(feature_input)
+            hidden = l.Dense(32, activation='relu', name='Hidden_layer')(input)
+
+        hidden = l.Dense(64, activation='relu', name='Hidden_layer_two')(hidden)
+        hidden = l.Dense(64, activation='relu', name='Hidden_layer_three')(hidden)
+        hidden = l.Dense(32, activation='relu', name='Hidden_layer_four')(hidden)
 
         out = l.Dense(1, activation='sigmoid', name='output')(hidden)
 
-        if self.attributed:
-            model = Model([feature_input, attr_input_1, attr_input_2], out)
-        else:
-            model = Model(feature_input, out)
+        model = Model(input, out)
 
-        model.compile(optimizer='adam', loss='poisson', metrics=['accuracy'])
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
         return model
+
+    def __get_data(self, node_df, y_col=None):
+        X = node_df[self.__get_cols()].values
+        y = node_df[y_col].values if y_col else None
+        return X, y
+
+    def __get_cols(self):
+        if self.attributed:
+            return self.feature_cols \
+                + [f'node_1_attr_{i}' for i in range(self.attr_dim)] \
+                + [f'node_2_attr_{i}' for i in range(self.attr_dim)]
+        else:
+            return self.feature_cols
+
+
+class CustomDataGen(Sequence):
+    def __init__(
+            self,
+            node_df,
+            feature_cols,
+            y_col,
+            batch_size,
+            shuffle=True):
+
+        self.node_df = node_df.copy()
+
+        self.feature_cols = feature_cols
+        self.y_col = y_col
+
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+
+    def on_epoch_end(self):
+        if self.shuffle:
+            self.node_df = self.node_df.sample(frac=1).reset_index(drop=True)
+
+    def __getitem__(self, index):
+        node_batch = self.node_df.iloc[index:index + self.batch_size]
+
+        if self.y_col:
+            return (node_batch[self.feature_cols].values,
+                    np.array(node_batch['node1_attrs'].values.tolist()),
+                    np.array(node_batch['node2_attrs'].values.tolist())), node_batch[self.y_col].values
+        else:
+            return (node_batch[self.feature_cols].values,
+                    np.array(node_batch['node1_attrs'].values.tolist()),
+                    np.array(node_batch['node2_attrs'].values.tolist())), None
+
+    def __len__(self):
+        n = int(len(self.node_df) / self.batch_size)
+        if n * self.batch_size < len(self.node_df):
+            n += 1
+        return n

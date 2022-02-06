@@ -68,24 +68,23 @@ def feature_importance_keras(model, layer_name='Hidden_layer', attrs=True, path=
     plot(x, y[0])
 
 
-def feature_importance_gb(importance_pd, name, path=None):
+def feature_importance(top_important_features, name, path=None):
     mpl.rcParams['figure.figsize'] = [6, 4]
     mpl.rcParams['figure.dpi'] = 125
 
     fig, ax = plt.subplots()
 
     sns.barplot(
-        data=importance_pd,
-        x=TOPOLOGICAL_FEATURE_NAMES,
-        y='FI',
+        top_important_features.index,
+        top_important_features.values,
         label='Feature importance',
         ax=ax,
         color='lightcoral',
         alpha=1
     )
 
-    ax.set_title("Feature importance using MDI")
-    ax.set_ylabel("Mean decrease in impurity")
+    ax.set_title("SHAP Feature importance")
+    ax.set_ylabel("SHAP Values")
     ax.set_xticklabels(ax.get_xticklabels(), rotation=40, ha="right")
     ax.legend()
 

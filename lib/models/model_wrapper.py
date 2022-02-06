@@ -1,15 +1,16 @@
 class ModelWrapper:
-    def __init__(self, name, args):
+    def __init__(self, feature_cols, name, args):
+        self.feature_cols = feature_cols
         self.name = name
         self.args = args
 
-    def fit(self, x, y):
+    def fit(self, node_df, y_col):
         raise NotImplementedError()
 
-    def predict(self, x):
+    def predict(self, node_df):
         raise NotImplementedError()
 
-    def feature_importance(self, path):
+    def feature_importance(self, samples, path):
         raise NotImplementedError()
 
     def plot_model(self, path):

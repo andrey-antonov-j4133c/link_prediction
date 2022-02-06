@@ -8,3 +8,5 @@ seaborn
 scikit-learn
 matplotlib
 powerlaw
+modin
+shap

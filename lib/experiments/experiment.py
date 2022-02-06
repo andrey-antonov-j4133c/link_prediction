@@ -1,8 +1,8 @@
 import math
 
-import pandas as pd
+import modin.pandas as pd
 
-from utils.data_arrange import data_arrange
+from utils.data_arrange import data_arrange, add_attributes
 from utils.metrics import calculate_metrics
 
 from data_formatting import formatter
@@ -16,20 +16,25 @@ class Experiment:
 
     def run(self, attributed, path, random_state=0):
         # PART 1 -- data reading and preparation
-        data = self.generator.load_data()
+        train_1, test_1, test_2, attributes = self.generator.load_data()
 
-        data['train_1'].dropna(inplace=True)
-        data['test_1'].dropna(inplace=True)
-        data['test_2'].dropna(inplace=True)
+        attr_dim = len(attributes.head(1)['attrs'].values[0]) if attributed else 1
 
-        attr_dim = len(data['train_1'].head(1)['node_1_attrs'].values[0]) if attributed else 1
+        if attributed:
+            attributes = attributes['attrs'].to_dict()
+
+            train_1 = add_attributes(train_1, attributes, attr_dim)
+            test_1 = add_attributes(test_1, attributes, attr_dim)
+            test_2 = add_attributes(test_2, attributes, attr_dim)
 
         # PART 2 -- models invocation
         link_prediction_model = self.model_cls(
+            feature_cols=TOPOLOGICAL_FEATURE_NAMES,
             name='Link prediction',
             args={'attr_dim': attr_dim, 'attributed': attributed, 'random_state': random_state})
 
         classification_model = self.model_cls(
+            feature_cols=TOPOLOGICAL_FEATURE_NAMES,
             name='Classification',
             args={'attr_dim': attr_dim, 'attributed': attributed, 'random_state': random_state})
 
@@ -37,18 +42,14 @@ class Experiment:
         classification_model.plot_model(path=path)
 
         # PART 3 -- link prediction model fitting
-        x, y = data_arrange(data['train_1'], attrs=attributed)
-
-        link_prediction_model.fit(x, y)
-        link_prediction_model.feature_importance(path=path)
+        link_prediction_model.fit(train_1, 'goal')
+        link_prediction_model.feature_importance(train_1.sample(n=FI_SAMPLES, replace=False), path=path)
 
         # PART 4 -- predicting links
-        x, _ = data_arrange(data['test_1'], train=False, attrs=attributed)
-
-        prob = link_prediction_model.predict(x)
+        prob = link_prediction_model.predict(test_1)
         prob = pd.Series(prob, name='prob')
 
-        link_probability = data['test_1'].join(prob)
+        link_probability = test_1.join(prob)
         plot_auc(link_probability, x='goal', y='prob', path=RESULT_PATH + path + '/AUC of link prediction model.png')
 
         link_prediction_metrics = calculate_metrics(
@@ -64,36 +65,33 @@ class Experiment:
         link_probability['quality_label'] = link_probability.apply(
             lambda row: 1 if row['abs_error'] <= train_median_error else 0, axis=1)
 
-        x, y = data_arrange(link_probability, goal='quality_label', attrs=attributed)
-        classification_model.fit(x, y)
-        classification_model.feature_importance(path=path)
+        classification_model.fit(link_probability, 'quality_label')
+        classification_model.feature_importance(link_probability.sample(n=FI_SAMPLES, replace=False), path=path)
 
         T = 0.5
 
-        x, _ = data_arrange(data['test_2'], train=False, attrs=attributed)
-
-        quality_probability = classification_model.predict(x)
-        link_probability = link_prediction_model.predict(x)
+        link_probability = link_prediction_model.predict(test_2)
+        quality_probability = classification_model.predict(test_2)
 
         quality_label = [1 if i > T else 0 for i in quality_probability]
 
-        data['test_2'] = data['test_2'].join(pd.Series(quality_probability, name='predicted_quality_prob'))
-        data['test_2'] = data['test_2'].join(pd.Series(link_probability, name='predicted_link_probability'))
-        data['test_2'] = data['test_2'].join(pd.Series(quality_label, name='predicted_quality_label'))
+        test_2 = test_2.join(pd.Series(quality_probability, name='predicted_quality_prob'))
+        test_2 = test_2.join(pd.Series(link_probability, name='predicted_link_probability'))
+        test_2 = test_2.join(pd.Series(quality_label, name='predicted_quality_label'))
 
-        data['test_2']['true_abs_error'] = data['test_2'].apply(
+        test_2['true_abs_error'] = test_2.apply(
             lambda row: math.fabs(row['goal'] - row['predicted_link_probability']), axis=1)
-        test_median_error = data['test_2']['true_abs_error'].median()
+        test_median_error = test_2['true_abs_error'].median()
 
-        data['test_2']['true_quality_label'] = data['test_2'].apply(
+        test_2['true_quality_label'] = test_2.apply(
             lambda row: 1 if row['true_abs_error'] <= test_median_error else 0, axis=1)
 
-        plot_auc(data['test_2'], 'true_quality_label', 'predicted_quality_prob',
+        plot_auc(test_2, 'true_quality_label', 'predicted_quality_prob',
                  path=RESULT_PATH + path + '/AUC of classification model.png')
 
         classification_metrics = calculate_metrics(
-            data['test_2']['true_quality_label'].values,
-            data['test_2']['predicted_quality_prob'].values,
+            test_2['true_quality_label'].values,
+            test_2['predicted_quality_prob'].values,
             'Classification',
             ['average_precision', 'roc_auc']
         )
