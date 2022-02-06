@@ -2,7 +2,7 @@ numpy
 pandas
 scipy
 networkx
-tensorflow=2.5.0
+tensorflow==2.5.0
 tensorflow_gpu
 seaborn
 scikit-learn
