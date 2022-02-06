@@ -41,15 +41,14 @@ datasets = [
     (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'}),
     (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'}),
     (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'}),
-    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'}),
+    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})
 ]
 
-#datasets = [
-#    (SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-#    (SyntheticFormatter, False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'}),
-#    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
-#    (RealWorldNonAttrFormatter, False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
-#]
+datasets = [
+    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora'}),
+    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'}),
+    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'}),
+]
 
 
 def __main__():
