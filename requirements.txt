@@ -3,7 +3,7 @@ pandas
 scipy
 networkx
 tensorflow==2.5.0
-tensorflow_gpu
+tensorflow_gpu==2.5.0
 seaborn
 scikit-learn
 matplotlib
