@@ -43,7 +43,7 @@ class Experiment:
 
         # PART 3 -- link prediction model fitting
         link_prediction_model.fit(train_1, 'goal')
-        link_prediction_model.feature_importance(train_1.sample(n=FI_SAMPLES, replace=False), path=path)
+        #link_prediction_model.feature_importance(train_1.sample(n=FI_SAMPLES, replace=False), path=path)
 
         # PART 4 -- predicting links
         prob = link_prediction_model.predict(test_1)

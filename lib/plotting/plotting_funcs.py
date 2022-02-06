@@ -69,7 +69,7 @@ def feature_importance_keras(model, layer_name='Hidden_layer', attrs=True, path=
 
 
 def feature_importance(top_important_features, name, path=None):
-    mpl.rcParams['figure.figsize'] = [6, 4]
+    mpl.rcParams['figure.figsize'] = [7, 5]
     mpl.rcParams['figure.dpi'] = 125
 
     fig, ax = plt.subplots()
