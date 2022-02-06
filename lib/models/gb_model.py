@@ -30,12 +30,12 @@ class GBModel(ModelWrapper, ABC):
     def predict(self, node_df):
         return self.model.predict_proba(node_df[self.feature_cols].values)[:, 1]
 
-    def feature_importance(self, samples, path):
+    def feature_importance(self, train_samples, test_samples, path):
         def f(X):
             return self.model.predict_proba(X)
 
-        explainer = shap.KernelExplainer(f, samples[self.feature_cols].values)
-        shap_values = explainer.shap_values(samples[self.feature_cols].values, nsamples=100)
+        explainer = shap.KernelExplainer(f, train_samples[self.feature_cols].values)
+        shap_values = explainer.shap_values(test_samples[self.feature_cols].values, nsamples=FI_PERMUTATIONS)
 
         importance_pd = pd.DataFrame(
             shap_values[0],

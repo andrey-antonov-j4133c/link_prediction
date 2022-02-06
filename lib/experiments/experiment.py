@@ -43,7 +43,10 @@ class Experiment:
 
         # PART 3 -- link prediction model fitting
         link_prediction_model.fit(train_1, 'goal')
-        #link_prediction_model.feature_importance(train_1.sample(n=FI_SAMPLES, replace=False), path=path)
+        link_prediction_model.feature_importance(
+            train_1.sample(n=FI_SAMPLES, replace=False),
+            test_1.sample(n=FI_SAMPLES, replace=False),
+            path=path)
 
         # PART 4 -- predicting links
         prob = link_prediction_model.predict(test_1)
@@ -66,7 +69,10 @@ class Experiment:
             lambda row: 1 if row['abs_error'] <= train_median_error else 0, axis=1)
 
         classification_model.fit(link_probability, 'quality_label')
-        classification_model.feature_importance(link_probability.sample(n=FI_SAMPLES, replace=False), path=path)
+        classification_model.feature_importance(
+            link_probability.sample(n=FI_SAMPLES, replace=False),
+            test_2.sample(n=FI_SAMPLES, replace=False),
+            path=path)
 
         T = 0.5
 

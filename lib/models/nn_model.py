@@ -35,14 +35,16 @@ class NNModel(ModelWrapper, ABC):
         X, _ = self.__get_data(node_df)
         return self.model.predict(X, verbose=1).squeeze()
 
-    def feature_importance(self, samples, path):
+    def feature_importance(self, train_samples, test_samples, path):
         def f(X):
             return self.model.predict(X)
 
-        X, _ = self.__get_data(samples)
+        X_train, _ = self.__get_data(train_samples)
+        X_test, _ = self.__get_data(test_samples)
 
-        explainer = shap.KernelExplainer(f, X)
-        shap_values = explainer.shap_values(X, nsamples=FI_PERMUTATIONS)
+        shap.explainers._deep.deep_tf.op_handlers["AddV2"] = shap.explainers._deep.deep_tf.passthrough
+        explainer = shap.DeepExplainer(self.model, X_train)
+        shap_values = explainer.shap_values(X_test)
 
         importance_pd = pd.DataFrame(
             shap_values[0],

@@ -10,7 +10,7 @@ class ModelWrapper:
     def predict(self, node_df):
         raise NotImplementedError()
 
-    def feature_importance(self, samples, path):
+    def feature_importance(self, train_samples, test_samples, path):
         raise NotImplementedError()
 
     def plot_model(self, path):
