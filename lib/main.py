@@ -82,29 +82,40 @@ def __main__():
         #(RealWorldNonAttrFormatter, Experiment, GBModel,
         # False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
 
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
+        #(SyntheticFormatter, Experiment, NNModel,
+        # True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
         #(SyntheticFormatter, Experiment, NNModel,
         # False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-
-        #(SyntheticFormatter, Experiment, NNModel,
-        # False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'}),
         #(SyntheticFormatter, Experiment, GBModel,
-        # False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'}),
+        # False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
+
+        (SyntheticFormatter, Experiment, NNModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'}),
 
     ]
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):
-        experiment_path = f"exp #{i+1}, {args['dataset_name']}, attributed is {attributed}, model: {model.MODEL_TYPE}"
-        os.makedirs(RESULT_PATH + experiment_path + '/')
+        experiment_path = f"{args['dataset_name']}, attributed is {attributed}, model: {model.MODEL_TYPE}"
 
-        log.info('STARTING EXPERIMENT')
-        log.info(experiment_path)
+        if not os.path.isdir(experiment_path):
+            try:
+                os.makedirs(RESULT_PATH + experiment_path + '/')
 
-        e = experiment(formatter(args, attributed), model)
-        e.run(attributed, experiment_path)
+                log.info('STARTING EXPERIMENT')
+                log.info(experiment_path)
+
+                e = experiment(formatter(args, attributed), model)
+                e.run(attributed, experiment_path)
+            except BaseException as e:
+                log.error(e)
+                log.error("Failed to compute, try again later")
+
+                if os.path.exists(experiment_path) and os.path.isdir(experiment_path):
+                    shutil.rmtree(experiment_path)
+        else:
+            log.warning(f'The path\n{experiment_path}\nSeems to already exist, skipping...')
 
 
 __main__()
