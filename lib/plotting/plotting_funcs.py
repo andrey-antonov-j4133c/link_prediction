@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import numpy as np
+import modin.pandas as pd
 
-import tensorflow.keras.backend as K
 from sklearn.metrics import roc_curve, auc
 
 from settings import *
@@ -28,46 +28,6 @@ def plot_auc(df, x='goal', y='prob', path=None):
         plt.clf()
 
 
-def feature_importance_keras(model, layer_name='Hidden_layer', attrs=True, path=None):
-    def plot(x, y):
-        sns.barplot(
-            x=x,
-            y=y,
-            label='Reconstruction feature importance',
-            color='lightcoral',
-            alpha=1
-        )
-
-        plt.xlabel('Feature')
-        plt.ylabel('NN Wheight')
-
-        plt.title('Relative feature importance')
-
-        if path:
-            plt.savefig(path)
-            plt.clf()
-
-    layer = model.get_layer(layer_name)
-    if attrs:
-        zero_tensor = K.constant(np.zeros((1, len(TOPOLOGICAL_FEATURE_NAMES) + EMBED_DIM)))
-    else:
-        zero_tensor = K.constant(np.zeros((1, len(TOPOLOGICAL_FEATURE_NAMES))))
-
-    if attrs:
-        x = TOPOLOGICAL_FEATURE_NAMES + ['{}'.format(i + 1) for i in range(EMBED_DIM)]
-    else:
-        x = TOPOLOGICAL_FEATURE_NAMES
-    y = K.eval(layer(zero_tensor))
-
-    if attrs:
-        mpl.rcParams['figure.figsize'] = [15, 8]
-    else:
-        mpl.rcParams['figure.figsize'] = [6, 4]
-    mpl.rcParams['figure.dpi'] = 125
-
-    plot(x, y[0])
-
-
 def feature_importance(top_important_features, name, path=None):
     mpl.rcParams['figure.figsize'] = [7, 5]
     mpl.rcParams['figure.dpi'] = 125
@@ -87,6 +47,49 @@ def feature_importance(top_important_features, name, path=None):
     ax.set_ylabel("SHAP Values")
     ax.set_xticklabels(ax.get_xticklabels(), rotation=40, ha="right")
     ax.legend()
+
+    if path:
+        plt.savefig(path)
+        plt.clf()
+
+
+def feature_distribution(feature_df, features, goal='true_quality_label', path=None):
+    def get_range(df, f):
+        return df[f].max() - df[f].min()
+
+    feature_df = feature_df[list(features) + [goal]]
+
+    good_predictability = feature_df[feature_df[goal] == 1]
+    bad_predictability = feature_df[feature_df[goal] == 0]
+
+    mpl.rcParams['figure.figsize'] = [7*TOP_K_FEATURES, 5]
+    mpl.rcParams['figure.dpi'] = 125
+
+    fig, axs = plt.subplots(ncols=TOP_K_FEATURES)
+
+    for i, feature in enumerate(features):
+        sns.histplot(
+            good_predictability,
+            x=feature,
+            binwidth=get_range(feature_df, feature)/15,
+            stat='density',
+            ax=axs[i],
+            color='lightcoral',
+            alpha=1,
+            log_scale=False)
+
+        sns.histplot(
+            bad_predictability,
+            x=feature,
+            binwidth=get_range(feature_df, feature)/15,
+            stat='density',
+            ax=axs[i],
+            color='lightskyblue',
+            alpha=0.85,
+            log_scale=False)
+
+        axs[i].set_ylabel("Density")
+        axs[i].set_yscale('log')
 
     if path:
         plt.savefig(path)

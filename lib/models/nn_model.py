@@ -3,7 +3,7 @@ from abc import ABC
 import numpy as np
 import pandas as pd
 
-from plotting.plotting_funcs import feature_importance_keras, feature_importance
+from plotting.plotting_funcs import feature_importance
 from settings import *
 from models.model_wrapper import ModelWrapper
 
@@ -18,14 +18,22 @@ import shap
 class NNModel(ModelWrapper, ABC):
     MODEL_TYPE = 'Keras NN model'
 
-    def __init__(self, feature_cols, name, args):
-        super().__init__(feature_cols, name, args)
+    def __init__(self, feature_cols, name, args, type='full'):
+        super().__init__(feature_cols, name, args, type)
 
         self.batch_size = 1024
         self.attr_dim = args['attr_dim']
         self.attributed = args['attributed']
 
-        self.model = self.__init_model()
+        if type not in ('full', 'selected_features'):
+            raise ValueError(f'"type" argument supposed to have ether "full" or "selected_features"\nGot {type}')
+
+        self.type = type
+
+        if self.type == 'full':
+            self.model = self.__init_full_model()
+        else:
+            self.model = self.__init_single_input_model()
 
     def fit(self, node_df, y_col):
         X, y = self.__get_data(node_df, y_col)
@@ -36,9 +44,6 @@ class NNModel(ModelWrapper, ABC):
         return self.model.predict(X, verbose=1).squeeze()
 
     def feature_importance(self, train_samples, test_samples, path):
-        def f(X):
-            return self.model.predict(X)
-
         X_train, _ = self.__get_data(train_samples)
         X_test, _ = self.__get_data(test_samples)
 
@@ -62,7 +67,7 @@ class NNModel(ModelWrapper, ABC):
     def plot_model(self, path):
         plot_model(self.model, show_shapes=True, to_file=RESULT_PATH + path + '/' + f'{self.name} model.png')
 
-    def __init_model(self):
+    def __init_full_model(self):
         input_length = len(self.feature_cols) + (self.attr_dim*2 if self.attributed else 0)
         input = Input(shape=(input_length,), name='Input')
 
@@ -90,12 +95,31 @@ class NNModel(ModelWrapper, ABC):
         model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
         return model
 
+    def __init_single_input_model(self):
+        input_length = len(self.__get_cols())
+        input = Input(shape=(input_length,), name='Input')
+
+        hidden = l.Dense(32, activation='relu', name='Hidden_layer')(input)
+        hidden = l.Dense(64, activation='relu', name='Hidden_layer_two')(hidden)
+        hidden = l.Dense(64, activation='relu', name='Hidden_layer_three')(hidden)
+        hidden = l.Dense(32, activation='relu', name='Hidden_layer_four')(hidden)
+
+        out = l.Dense(1, activation='sigmoid', name='output')(hidden)
+
+        model = Model(input, out)
+
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        return model
+
+
     def __get_data(self, node_df, y_col=None):
         X = node_df[self.__get_cols()].values
         y = node_df[y_col].values if y_col else None
         return X, y
 
     def __get_cols(self):
+        if self.type != 'full':
+            return self.feature_cols
         if self.attributed:
             return self.feature_cols \
                 + [f'node_1_attr_{i}' for i in range(self.attr_dim)] \

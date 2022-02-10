@@ -14,6 +14,14 @@ class Experiment:
         self.generator = generator
         self.model_cls = model
 
+    def get_attributes(self, dfs, attrs_dict, attr_dim):
+        for i in range(len(dfs)):
+            for j in range(attr_dim):
+                dfs[i][f'node_1_attr_{j}'] = dfs[i]['node1'].apply(lambda x: attrs_dict[x][j])
+                dfs[i][f'node_2_attr_{j}'] = dfs[i]['node2'].apply(lambda x: attrs_dict[x][j])
+
+        return dfs
+
     def run(self, attributed, path, random_state=0):
         # PART 1 -- data reading and preparation
         train_1, test_1, test_2, attributes = self.generator.load_data()
@@ -21,11 +29,11 @@ class Experiment:
         attr_dim = len(attributes.head(1)['attrs'].values[0]) if attributed else 1
 
         if attributed:
-            attributes = attributes['attrs'].to_dict()
-
-            train_1 = add_attributes(train_1, attributes, attr_dim)
-            test_1 = add_attributes(test_1, attributes, attr_dim)
-            test_2 = add_attributes(test_2, attributes, attr_dim)
+            train_1, test_1, test_2 = self.get_attributes(
+                [train_1, test_1, test_2],
+                attributes['attrs'].to_dict(),
+                attr_dim
+            )
 
         # PART 2 -- models invocation
         link_prediction_model = self.model_cls(
@@ -43,6 +51,7 @@ class Experiment:
 
         # PART 3 -- link prediction model fitting
         link_prediction_model.fit(train_1, 'goal')
+
         link_prediction_model.feature_importance(
             train_1.sample(n=FI_SAMPLES, replace=False),
             test_1.sample(n=FI_SAMPLES, replace=False),
@@ -53,7 +62,10 @@ class Experiment:
         prob = pd.Series(prob, name='prob')
 
         link_probability = test_1.join(prob)
-        plot_auc(link_probability, x='goal', y='prob', path=RESULT_PATH + path + '/AUC of link prediction model.png')
+        plot_auc(
+            link_probability,
+            x='goal', y='prob',
+            path=RESULT_PATH + path + '/AUC of link prediction model.png')
 
         link_prediction_metrics = calculate_metrics(
             link_probability['goal'].values,
@@ -69,7 +81,7 @@ class Experiment:
             lambda row: 1 if row['abs_error'] <= train_median_error else 0, axis=1)
 
         classification_model.fit(link_probability, 'quality_label')
-        classification_model.feature_importance(
+        classification_feature_importance = classification_model.feature_importance(
             link_probability.sample(n=FI_SAMPLES, replace=False),
             test_2.sample(n=FI_SAMPLES, replace=False),
             path=path)
@@ -92,8 +104,17 @@ class Experiment:
         test_2['true_quality_label'] = test_2.apply(
             lambda row: 1 if row['true_abs_error'] <= test_median_error else 0, axis=1)
 
-        plot_auc(test_2, 'true_quality_label', 'predicted_quality_prob',
-                 path=RESULT_PATH + path + '/AUC of classification model.png')
+        feature_distribution(
+            test_2,
+            classification_feature_importance.index.values,
+            path=RESULT_PATH + path + '/Top features distribution.png'
+        )
+
+        plot_auc(
+            test_2,
+            'true_quality_label',
+            'predicted_quality_prob',
+            path=RESULT_PATH + path + '/AUC of classification model.png')
 
         classification_metrics = calculate_metrics(
             test_2['true_quality_label'].values,

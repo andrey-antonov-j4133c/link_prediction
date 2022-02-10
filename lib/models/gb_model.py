@@ -14,8 +14,8 @@ import shap
 class GBModel(ModelWrapper, ABC):
     MODEL_TYPE = 'Gradient Boosting model'
 
-    def __init__(self, feature_cols, name, args):
-        super().__init__(feature_cols, name, args)
+    def __init__(self, feature_cols, name, args, type='full'):
+        super().__init__(feature_cols, name, args, type)
 
         self.n_estimators = 100
         self.criterion = 'gini'

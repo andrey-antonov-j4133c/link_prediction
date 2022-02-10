@@ -1,5 +1,5 @@
 class ModelWrapper:
-    def __init__(self, feature_cols, name, args):
+    def __init__(self, feature_cols, name, args, type='full'):
         self.feature_cols = feature_cols
         self.name = name
         self.args = args
