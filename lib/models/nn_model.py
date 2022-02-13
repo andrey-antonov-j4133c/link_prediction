@@ -62,9 +62,8 @@ class NNModel(ModelWrapper, ABC):
         for i, (index, val) in enumerate(importance_sorted.items()):
             if s >= CUMULATIVE_FEATURE_IMPORTANCE or i > FEATURE_IMPORTANCE_CUTOFF:
                 break
-            if val > 0:
-                s += val
-                features.append(index)
+            s += val
+            features.append(index)
 
         top_important_features = importance_sorted[features]
 

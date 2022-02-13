@@ -25,8 +25,8 @@ def __main__():
     else:
         log.basicConfig(format="%(levelname)s: %(message)s")
 
-    #if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
-    #    shutil.rmtree(RESULT_PATH)
+    if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
+        shutil.rmtree(RESULT_PATH)
 
     data = [
         # LEGACY EXPERIMENTS #
@@ -54,14 +54,11 @@ def __main__():
 
         # Real-word OLP
         (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
+         False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
         (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': '595b15bd549f067e0263b525'}),
+         False, {'dataset_name': '595b15bd549f067e0263b525'}),
         (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
-
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'})
+         False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
     ]
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):
