@@ -65,7 +65,7 @@ class Experiment:
         plot_auc(
             link_probability,
             x='goal', y='prob',
-            path=RESULT_PATH + path + '/AUC of link prediction model.png')
+            path=RESULT_PATH + path + '/AUC of link prediction model.pdf')
 
         link_prediction_metrics = calculate_metrics(
             link_probability['goal'].values,
@@ -107,14 +107,14 @@ class Experiment:
         feature_distribution(
             test_2,
             classification_feature_importance.index.values,
-            path=RESULT_PATH + path + '/Top features distribution.png'
+            path=RESULT_PATH + path + '/Top features distribution.pdf'
         )
 
         plot_auc(
             test_2,
             'true_quality_label',
             'predicted_quality_prob',
-            path=RESULT_PATH + path + '/AUC of classification model.png')
+            path=RESULT_PATH + path + '/AUC of classification model.pdf')
 
         classification_metrics = calculate_metrics(
             test_2['true_quality_label'].values,

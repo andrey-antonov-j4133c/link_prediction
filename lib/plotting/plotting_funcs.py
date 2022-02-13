@@ -1,4 +1,5 @@
 import matplotlib as mpl
+from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -14,7 +15,7 @@ def plot_auc(df, x='goal', y='prob', path=None):
     mpl.rcParams['figure.figsize'] = [8, 5]
     mpl.rcParams['figure.dpi'] = 125
 
-    _, ax = plt.subplots(1)
+    fig, ax = plt.subplots()
 
     fpr, tpr, _ = roc_curve(df[x], df[y])
     sns.lineplot(x=fpr, y=tpr, ax=ax)
@@ -24,8 +25,9 @@ def plot_auc(df, x='goal', y='prob', path=None):
     ax.set_ylabel('True positive rate')
 
     if path:
-        plt.savefig(path)
-        plt.clf()
+        pdf = PdfPages(path)
+        pdf.savefig(fig)
+        pdf.close()
 
 
 def feature_importance(top_important_features, name, path=None):
@@ -44,13 +46,16 @@ def feature_importance(top_important_features, name, path=None):
     )
 
     ax.set_title("SHAP Feature importance")
+    ax.set_xlabel("Features")
     ax.set_ylabel("SHAP Values")
+
     ax.set_xticklabels(ax.get_xticklabels(), rotation=40, ha="right")
     ax.legend()
 
     if path:
-        plt.savefig(path)
-        plt.clf()
+        pdf = PdfPages(path)
+        pdf.savefig(fig)
+        pdf.close()
 
 
 def feature_distribution(feature_df, features, goal='true_quality_label', path=None):
@@ -62,18 +67,19 @@ def feature_distribution(feature_df, features, goal='true_quality_label', path=N
     good_predictability = feature_df[feature_df[goal] == 1]
     bad_predictability = feature_df[feature_df[goal] == 0]
 
-    mpl.rcParams['figure.figsize'] = [7*TOP_K_FEATURES, 5]
     mpl.rcParams['figure.dpi'] = 125
 
-    fig, axs = plt.subplots(ncols=TOP_K_FEATURES)
+    figures = []
+    for feature in features:
+        figure = plt.figure()
+        ax = figure.subplots()
 
-    for i, feature in enumerate(features):
         sns.histplot(
             good_predictability,
             x=feature,
-            binwidth=get_range(feature_df, feature)/15,
+            binwidth=get_range(feature_df, feature) / 15,
             stat='density',
-            ax=axs[i],
+            ax=ax,
             color='lightcoral',
             alpha=1,
             log_scale=False)
@@ -81,16 +87,20 @@ def feature_distribution(feature_df, features, goal='true_quality_label', path=N
         sns.histplot(
             bad_predictability,
             x=feature,
-            binwidth=get_range(feature_df, feature)/15,
+            binwidth=get_range(feature_df, feature) / 15,
             stat='density',
-            ax=axs[i],
+            ax=ax,
             color='lightskyblue',
             alpha=0.85,
             log_scale=False)
 
-        axs[i].set_ylabel("Density")
-        axs[i].set_yscale('log')
+        ax.set_ylabel("Density")
+        ax.set_yscale('log')
+
+        figures.append(figure)
 
     if path:
-        plt.savefig(path)
-        plt.clf()
+        pdf = PdfPages(path)
+        for figure in figures:
+            pdf.savefig(figure)
+        pdf.close()

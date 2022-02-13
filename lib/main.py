@@ -29,17 +29,39 @@ def __main__():
     #    shutil.rmtree(RESULT_PATH)
 
     data = [
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-
-        (SyntheticFormatter, Experiment, NNModel,
-         False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-
+        # LEGACY EXPERIMENTS #
+        # 1. LFR mu 0.1-1.0
         (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.2;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.3;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.4;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.5;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.6;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.7;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.8;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.9;average_degree=5;'}),
+        (SyntheticFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=1;average_degree=5;'}),
+
+        # Real-word OLP
+        (RealWorldNonAttrFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
+        (RealWorldNonAttrFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': '595b15bd549f067e0263b525'}),
+        (RealWorldNonAttrFormatter, Experiment, GBModel,
+         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
+
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         False, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'})
     ]
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):

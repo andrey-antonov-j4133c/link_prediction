@@ -31,12 +31,8 @@ class FeatureSelectionExperiment(Experiment):
         remainder = pd.concat([df, train_1]).drop_duplicates(keep=False).reset_index(drop=True)
 
         test_1 = remainder.sample(n=int(len(df) * ts1)).reset_index(drop=True)
-        #test_1 = balance_data(test_1)
 
         remainder = pd.concat([remainder, test_1], ignore_index=True).drop_duplicates(keep=False).reset_index(drop=True)
-
-        #test_2 = remainder.sample(n=int(len(df) * ts2)).reset_index(drop=True)
-        #test_2 = balance_data(test_2)
 
         remainder = pd.concat([remainder, test_2], ignore_index=True).drop_duplicates(keep=False).reset_index(drop=True)
 
@@ -85,7 +81,7 @@ class FeatureSelectionExperiment(Experiment):
         plot_auc(
             link_probability,
             x='goal', y='prob',
-            path=RESULT_PATH + path + '/AUC of link prediction model.png')
+            path=RESULT_PATH + path + '/AUC of link prediction model.pdf')
 
         link_prediction_metrics = calculate_metrics(
             link_probability['goal'].values,
@@ -110,7 +106,7 @@ class FeatureSelectionExperiment(Experiment):
             link_probability,
             classification_feature_importance.index.values,
             goal='quality_label',
-            path=RESULT_PATH + path + '/Top features distribution.png'
+            path=RESULT_PATH + path + '/Top features distribution.pdf'
         )
 
         most_important_features = classification_feature_importance.index.values
@@ -135,8 +131,6 @@ class FeatureSelectionExperiment(Experiment):
         remainder['true_quality_label'] = remainder.apply(
             lambda row: 1 if row['true_abs_error'] <= test_median_error else 0, axis=1)
 
-
-
         quality_probability_all_features = classification_model_all_features.predict(remainder)
         remainder = remainder.join(pd.Series(
             quality_probability_all_features,
@@ -149,7 +143,7 @@ class FeatureSelectionExperiment(Experiment):
             remainder,
             'true_quality_label',
             'predicted_quality_prob_all_features',
-            path=RESULT_PATH + path + '/AUC of classification model with all features.png')
+            path=RESULT_PATH + path + '/AUC of classification model with all features.pdf')
 
         classification_metrics_all_features = calculate_metrics(
             remainder['true_quality_label'].values,
@@ -170,7 +164,7 @@ class FeatureSelectionExperiment(Experiment):
             remainder,
             'true_quality_label',
             'predicted_quality_prob_selected_features',
-            path=RESULT_PATH + path + '/AUC of classification model with selected features.png')
+            path=RESULT_PATH + path + '/AUC of classification model with selected features.pdf')
 
         classification_metrics_selected_features = calculate_metrics(
             remainder['true_quality_label'].values,

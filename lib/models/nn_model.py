@@ -55,17 +55,28 @@ class NNModel(ModelWrapper, ABC):
             shap_values[0],
             columns=self.__get_cols())
 
-        top_important_features = importance_pd.mean(axis=0).sort_values(ascending=False).head(TOP_K_FEATURES)
+        importance_sorted = importance_pd.mean(axis=0).sort_values(ascending=False)
+
+        s = 0.0
+        features = []
+        for i, (index, val) in enumerate(importance_sorted.items()):
+            if s >= CUMULATIVE_FEATURE_IMPORTANCE or i > FEATURE_IMPORTANCE_CUTOFF:
+                break
+            if val > 0:
+                s += val
+                features.append(index)
+
+        top_important_features = importance_sorted[features]
 
         feature_importance(
             top_important_features,
             self.name,
-            path=RESULT_PATH + path + '/' + f'Feature importance for {self.name}')
+            path=RESULT_PATH + path + '/' + f'Feature importance for {self.name}.pdf')
 
         return top_important_features
 
     def plot_model(self, path):
-        plot_model(self.model, show_shapes=True, to_file=RESULT_PATH + path + '/' + f'{self.name} model.png')
+        plot_model(self.model, show_shapes=True, to_file=RESULT_PATH + path + '/' + f'{self.name} model.pdf')
 
     def __init_full_model(self):
         input_length = len(self.feature_cols) + (self.attr_dim*2 if self.attributed else 0)
