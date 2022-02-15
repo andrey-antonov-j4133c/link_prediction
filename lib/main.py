@@ -52,7 +52,7 @@ def __main__():
         (SyntheticFormatter, Experiment, GBModel,
          False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=1;average_degree=5;'}),
 
-        # Real-word OLP
+        # 2. Real-word OLP
         (RealWorldNonAttrFormatter, Experiment, GBModel,
          False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
         (RealWorldNonAttrFormatter, Experiment, GBModel,

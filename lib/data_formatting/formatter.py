@@ -20,7 +20,7 @@ class Formatter:
         self.attributed = attributed
 
     def load_data(self):
-        if self.args['dataset_name'] in os.listdir(PRE_COMPUTED_PATH):
+        if os.path.isdir(PRE_COMPUTED_PATH) and self.args['dataset_name'] in os.listdir(PRE_COMPUTED_PATH):
             log.info('Found data from pre-computed')
             log.info('Loading data now')
 
