@@ -17,7 +17,7 @@ def plot_auc(df, x='goal', y='prob', path=None):
 
     fig, ax = plt.subplots()
 
-    fpr, tpr, _ = roc_curve(df[x], df[y])
+    fpr, tpr, _ = roc_curve(df[x].astype(int), df[y].astype(float))
     sns.lineplot(x=fpr, y=tpr, ax=ax)
 
     ax.legend([f'ROC curve, AUC = {auc(fpr, tpr):.4f}'])
