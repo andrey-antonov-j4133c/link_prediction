@@ -44,7 +44,7 @@ datasets = [
     (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})
 ]
 
-data = [
+datasets = [
     (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})
 ]
 
