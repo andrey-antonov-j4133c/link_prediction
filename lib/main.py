@@ -64,10 +64,38 @@ def __main__():
     data = [
         # NEW EXPERIMENTS #
         # 1. Feature selection
-        (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
+        #(RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
+        # True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
+        #(RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
+        # True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})
+        # 2. Synthetic attributed
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.4;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.5;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.6;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.7;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.8;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.9;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=1;b=0.1;s=0.1;o=0.1'})
+    ]
+
+    data = [
+        (RealWorldAttrFormatter, Experiment, NNModel,
          True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
         (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
     ]
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):

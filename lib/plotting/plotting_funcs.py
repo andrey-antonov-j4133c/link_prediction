@@ -31,7 +31,7 @@ def plot_auc(df, x='goal', y='prob', path=None):
 
 
 def feature_importance(top_important_features, name, path=None):
-    mpl.rcParams['figure.figsize'] = [7, 5]
+    mpl.rcParams['figure.figsize'] = [10, 8]
     mpl.rcParams['figure.dpi'] = 125
 
     fig, ax = plt.subplots()
