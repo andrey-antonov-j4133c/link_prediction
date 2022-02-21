@@ -104,14 +104,10 @@ def __main__():
          True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
         (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
          True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'}),
-        (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'}),
         (RealWorldAttrFormatter, Experiment, NNModel,
          True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
         (RealWorldAttrFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'}),
-        (RealWorldAttrFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'}),
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})
     ]
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):
