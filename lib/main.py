@@ -92,10 +92,26 @@ def __main__():
     ]
 
     data = [
-        (RealWorldAttrFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.5;b=0.1;s=0.1;o=0.1'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.8;b=0.1;s=0.1;o=0.1'}),
         (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
          True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
+        (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'}),
+        (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'}),
+        (RealWorldAttrFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
+        (RealWorldAttrFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'}),
+        (RealWorldAttrFormatter, Experiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'dblp'}),
     ]
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):

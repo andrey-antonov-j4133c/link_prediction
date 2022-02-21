@@ -44,10 +44,6 @@ datasets = [
     (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})
 ]
 
-datasets = [
-    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'})
-]
-
 
 def __main__():
     ray.init()
