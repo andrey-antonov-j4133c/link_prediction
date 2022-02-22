@@ -62,6 +62,8 @@ class NNModel(ModelWrapper, ABC):
             columns=self.__get_cols())
 
         top_important_features = importance_pd.mean(axis=0).sort_values(ascending=False)
+        top_important_features = top_important_features\
+            .reindex(top_important_features.map(lambda x: x).abs().sort_values(ascending=False).index)
 
         feature_importance(
             top_important_features,

@@ -10,37 +10,14 @@ from data_formatting.synthetic_networks import SyntheticFormatter
 
 from settings import *
 
-datasets = [
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run1'}),
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run2'}),
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run3'}),
+datasets = []
 
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run1'}),
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run2'}),
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run3'}),
-
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run1'}),
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run2'}),
-    (SyntheticFormatter, True,
-     {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run3'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.4;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.5;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.6;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.7;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.8;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.9;b=0.1;s=0.1;o=0.1'}),
-    #(SyntheticFormatter, True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=1;b=0.1;s=0.1;o=0.1'})
-]
+for a in ('0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1'):
+    for run in (1, 2, 3, 4, 5):
+        datasets.append(
+            (SyntheticFormatter, True,
+             {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a={a};b=0.1;s=0.1;o=0.1_run{run}'})
+        )
 
 
 def __main__():

@@ -29,28 +29,39 @@ def __main__():
     #if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
     #    shutil.rmtree(RESULT_PATH)
 
-    data = [
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run1'}),
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run2'}),
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run3'}),
+    data = []
 
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run1'}),
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run2'}),
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run3'}),
+    for a in ('0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1'):
+        for run in (1, 2, 3, 4, 5):
+            data.append(
+                (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+                 True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a={a};b=0.1;s=0.1;o=0.1_run{run}'})
+            )
 
+    data.append(
+        (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a=0.5;b=0.1;s=0.1;o=0.1_run1'})
+    )
+
+    data.append(
+        (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
+    )
+
+    data.append(
         (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run1'}),
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
+    )
+
+    data.append(
         (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run2'}),
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
+    )
+
+    data.append(
         (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run3'}),
-    ]
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'pubmed'})
+    )
 
     exp_types = {
         Experiment: "Legacy",

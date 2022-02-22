@@ -14,6 +14,7 @@ from settings import *
 def plot_auc(df, x='goal', y='prob', path=None):
     mpl.rcParams['figure.figsize'] = [8, 5]
     mpl.rcParams['figure.dpi'] = 125
+    mpl.rcParams['font.size'] = 14
 
     fig, ax = plt.subplots()
 
@@ -31,8 +32,9 @@ def plot_auc(df, x='goal', y='prob', path=None):
 
 
 def feature_importance(top_important_features, name, path=None):
-    mpl.rcParams['figure.figsize'] = [10, 8]
+    mpl.rcParams['figure.figsize'] = [12, 10]
     mpl.rcParams['figure.dpi'] = 125
+    mpl.rcParams['font.size'] = 14
 
     fig, ax = plt.subplots()
 
@@ -42,7 +44,6 @@ def feature_importance(top_important_features, name, path=None):
     sns.barplot(
         top_important_features.index,
         top_important_features.values,
-        label='Feature importance',
         ax=ax,
         palette=clrs,
         alpha=1
@@ -70,7 +71,7 @@ def feature_distribution(feature_df, features, goal='true_quality_label', path=N
     good_predictability = feature_df[feature_df[goal] == 1]
     bad_predictability = feature_df[feature_df[goal] == 0]
 
-    mpl.rcParams['figure.dpi'] = 125
+    mpl.rcParams['font.size'] = 14
 
     figures = []
     for feature in features:
