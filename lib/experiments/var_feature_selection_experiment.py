@@ -5,6 +5,7 @@ import modin.pandas as pd
 
 from data_formatting import formatter
 from experiments.experiment import Experiment
+from experiments.feature_selection_experiment import FeatureSelectionExperiment
 
 from utils.metrics import calculate_metrics
 from plotting.plotting_funcs import plot_auc, feature_distribution
@@ -12,67 +13,9 @@ from plotting.plotting_funcs import plot_auc, feature_distribution
 from settings import *
 
 
-class FeatureSelectionExperiment(Experiment):
+class VaryingFeatureSelectionExperiment(FeatureSelectionExperiment):
     def __init__(self, generator: formatter, model):
         super().__init__(generator, model)
-
-    def classify(self,
-                 train_df: pd.DataFrame,
-                 train_y: str,
-                 test_df: pd.DataFrame,
-                 test_y: str,
-                 features: list,
-                 attr_dim, attributed, random_state, path, i, all_features=False):
-
-        model_name = f'cls_model_{i}'
-        path += f'/{model_name}/'
-        os.makedirs(RESULT_PATH + path)
-
-        pd.DataFrame({"Features used": features}).to_csv(RESULT_PATH + path + f'/features_used.csv')
-
-        model = self.model_cls(
-            feature_cols=TOPOLOGICAL_FEATURE_NAMES if all_features else features,
-            name=model_name,
-            args={'attr_dim': attr_dim, 'attributed': attributed, 'random_state': random_state},
-            type='full' if all_features else 'selected_features')
-
-        model.plot_model(path=path)
-
-        model.fit(train_df, train_y)
-
-        feature_importance = None
-        if all_features:
-            feature_importance = model.feature_importance(
-                train_df.sample(n=FI_SAMPLES, replace=False),
-                test_df.sample(n=FI_SAMPLES, replace=False),
-                path=path)
-
-            feature_distribution(
-                train_df,
-                feature_importance.index.values[:FEATURE_IMPORTANCE_CUTOFF],
-                goal='quality_label',
-                path=RESULT_PATH + path + f'/feature_dist.pdf'
-            )
-
-        quality_prob = model.predict(test_df, path)
-        test_df = test_df.join(pd.Series(quality_prob, name=f'pred_quality_prob_{model_name}'))
-        test_df = test_df.join(
-            pd.Series([1 if i > 0.5 else 0 for i in quality_prob], name=f'pred_quality_label_{model_name}'))
-
-        plot_auc(
-            test_df,
-            'true_quality_label',
-            f'pred_quality_label_{model_name}',
-            path=RESULT_PATH + path + '/auc.pdf')
-
-        metrics = calculate_metrics(
-            test_df['true_quality_label'].values,
-            test_df[f'pred_quality_label_{model_name}'].values,
-            model_name,
-            ['average_precision', 'roc_auc']
-        )
-
-        return model, feature_importance, model_name, metrics
 
     def run(self, attributed, path, random_state=0):
         train_1, test_1, test_2, attributes = self.generator.load_data()
@@ -149,24 +92,23 @@ class FeatureSelectionExperiment(Experiment):
                 link_probability, 'quality_label', test_2, 'true_quality_label',
                 cols, attr_dim, attributed, random_state, path, 0, all_features=True)
 
-        s = 0.0
-        most_important_features = []
-        for i, (index, val) in enumerate(feature_importance.items()):
-            if s >= CUMULATIVE_FEATURE_IMPORTANCE or val <= 0:
-                break
-            s += val
-            most_important_features.append(index)
+        metrics_arr = [link_prediction_metrics, all_features_metrics]
 
-        classification_model_selected_features,\
-            _,\
-            selected_features_name,\
-            selected_features_metrics = self.classify(
-                link_probability, 'quality_label', test_2, 'true_quality_label',
-                most_important_features, attr_dim, attributed, random_state, path, 1, all_features=False)
+        i = 1
+        to = 2
+        while to < len(feature_importance):
+            features = feature_importance.iloc[:to]
 
-        metrics = pd.DataFrame([
-            link_prediction_metrics,
-            all_features_metrics,
-            selected_features_metrics])
+            classification_model_selected_features, \
+                _, \
+                selected_features_name, \
+                selected_features_metrics = self.classify(
+                    link_probability, 'quality_label', test_2, 'true_quality_label',
+                    features.index.values, attr_dim, attributed, random_state, path, i, all_features=False)
 
+            metrics_arr.append(selected_features_metrics)
+            i += 1
+            to += 2
+
+        metrics = pd.DataFrame(metrics_arr)
         metrics.to_csv(RESULT_PATH + path + '/results.csv')

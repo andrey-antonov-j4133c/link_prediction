@@ -21,11 +21,11 @@ sigma = [0.1]
 omega = [0.1]
 
 # ========FIXED PARAMS=========
-n = 2 ** 10
+n = 100
 m = 2 ** (10 + 5)
 max_deg = 500
 k = 6
-d = 100
+d = 8
 phi_c = 1
 
 M = np.array([

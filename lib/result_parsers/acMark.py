@@ -37,6 +37,8 @@ def main():
         "Classification AP": [],
         "Classification AUC": []
     }
+    # for run in (1, 2, 3):
+    # ...
 
     for dir in os.listdir(RESULT_PATH):
         if dir[:6] != "acMark":

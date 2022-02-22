@@ -6,6 +6,7 @@ from typing import Tuple
 import networkx as nx
 import numpy as np
 import modin.pandas as pd
+import time
 
 from settings import *
 
@@ -19,8 +20,8 @@ class Formatter:
         self.args = args
         self.attributed = attributed
 
-    def load_data(self):
-        if os.path.isdir(PRE_COMPUTED_PATH) and self.args['dataset_name'] in os.listdir(PRE_COMPUTED_PATH):
+    def load_data(self, pre_compute=False):
+        if os.path.isdir(PRE_COMPUTED_PATH) and self.args['dataset_name'] in os.listdir(PRE_COMPUTED_PATH) and not pre_compute:
             log.info('Found data from pre-computed')
             log.info('Loading data now')
 
@@ -44,9 +45,9 @@ class Formatter:
         if len(TOPOLOGICAL_FEATURE_NAMES) > 0:
             log.info(f'Calculating topological features: {TOPOLOGICAL_FEATURE_NAMES}')
 
-            train1 = self._calculate_features(train1, G)
-            test1 = self._calculate_features(test1, G)
-            test2 = self._calculate_features(test2, G)
+            train1 = self._calculate_features(train1, G, 'train1')
+            test1 = self._calculate_features(test1, G, 'test1')
+            test2 = self._calculate_features(test2, G, 'test2')
 
             log.info('Done calculating topological features')
 
@@ -93,7 +94,7 @@ class Formatter:
         log.info('Success!')
         return df_tr_1, df_ts_1, df_ts_2
 
-    def _calculate_features(self, df, G):
+    def _calculate_features(self, df, G, name):
         functions = {
             'RAI': nx.resource_allocation_index,
             'JC': nx.jaccard_coefficient,
@@ -101,16 +102,25 @@ class Formatter:
             'PA': nx.preferential_attachment
         }
 
+        ellapsed_time = dict()
+
         for feature, function in functions.items():
             frm = df['node1'].values
             to = df['node2'].values
             edges = [(frm[i], to[i]) for i in range(len(frm))]
-            features = [f[2] for f in function(G, edges)]
 
+            start = time.time()
+            features = [f[2] for f in function(G, edges)]
+            end = time.time()
+
+            ellapsed_time[feature] = [end-start]
             df[feature] = pd.Series(features)
 
             if feature in TOPOLOGICAL_FEATURES_TO_NORMALIZE:
                 df[feature] -= df[feature].min()
                 df[feature] /= df[feature].max()
+
+        time_df = pd.DataFrame(ellapsed_time)
+        time_df.to_csv(PRE_COMPUTED_PATH + self.args['dataset_name'] + f'/{name}_time.csv')
 
         return df

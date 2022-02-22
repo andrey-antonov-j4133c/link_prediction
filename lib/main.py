@@ -3,6 +3,7 @@ import os
 import shutil
 import ray
 
+from experiments.var_feature_selection_experiment import VaryingFeatureSelectionExperiment
 from models.nn_model import NNModel
 from models.gb_model import GBModel
 
@@ -29,89 +30,36 @@ def __main__():
     #    shutil.rmtree(RESULT_PATH)
 
     data = [
-        # LEGACY EXPERIMENTS #
-        # 1. LFR mu 0.1-1.0
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.1;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.2;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.3;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.4;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.5;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.6;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.7;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.8;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=0.9;average_degree=5;'}),
-        (SyntheticFormatter, Experiment, GBModel,
-         False, {'path': DATA_PATH + 'synthetic/LFR/', 'dataset_name': 'LFR-t1=3;t2=1.5;mu=1;average_degree=5;'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run1'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run2'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run3'}),
 
-        # 2. Real-word OLP
-        (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'dataset_name': 'Email_network_Uni_R-V_Spain_Email_network_Uni_R-V_Spain'}),
-        (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'dataset_name': '595b15bd549f067e0263b525'}),
-        (RealWorldNonAttrFormatter, Experiment, GBModel,
-         False, {'dataset_name': 'Malaria_var_DBLa_HVR_networks_HVR_networks_9'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run1'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run2'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1_run3'}),
+
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run1'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run2'}),
+        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run3'}),
     ]
 
-    data = [
-        # NEW EXPERIMENTS #
-        # 1. Feature selection
-        #(RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
-        # True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
-        #(RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
-        # True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'cora_ml'})
-        # 2. Synthetic attributed
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.2;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.4;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.5;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.6;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.7;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.8;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.9;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=1;b=0.1;s=0.1;o=0.1'})
-    ]
-
-    data = [
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.5;b=0.1;s=0.1;o=0.1'}),
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.8;b=0.1;s=0.1;o=0.1'}),
-        (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
-        (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'}),
-        (RealWorldAttrFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'citeseer'}),
-        (RealWorldAttrFormatter, Experiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': 'pubmed'})
-    ]
+    exp_types = {
+        Experiment: "Legacy",
+        FeatureSelectionExperiment: "Feature selection",
+        VaryingFeatureSelectionExperiment: "Varying feature selection"
+    }
 
     for i, (formatter, experiment, model, attributed, args) in enumerate(data):
-        exp_type = 'Feature selection' if experiment == FeatureSelectionExperiment else 'Legacy'
+        exp_type = exp_types[experiment]
         experiment_path = f"{args['dataset_name']}, attributed is {attributed}, model: {model.MODEL_TYPE}, exp: {exp_type}"
 
         if not os.path.isdir(RESULT_PATH + experiment_path + '/'):

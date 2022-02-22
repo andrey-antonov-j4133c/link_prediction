@@ -1,3 +1,4 @@
+import time
 from abc import ABC
 
 import numpy as np
@@ -39,9 +40,14 @@ class NNModel(ModelWrapper, ABC):
         X, y = self.__get_data(node_df, y_col)
         self.model.fit(X, y, epochs=EPOCH, verbose=1)
 
-    def predict(self, node_df):
+    def predict(self, node_df, path=None):
         X, _ = self.__get_data(node_df)
-        return self.model.predict(X, verbose=1).squeeze()
+        stat = time.time()
+        res = self.model.predict(X, verbose=1).squeeze()
+        end = time.time()
+        if path:
+            pd.DataFrame({"Predict time": [end-stat]}).to_csv(RESULT_PATH + path + '/' + f'predict_time_for_{self.name}.csv')
+        return res
 
     def feature_importance(self, train_samples, test_samples, path):
         X_train, _ = self.__get_data(train_samples)
@@ -55,17 +61,7 @@ class NNModel(ModelWrapper, ABC):
             shap_values[0],
             columns=self.__get_cols())
 
-        importance_sorted = importance_pd.mean(axis=0).sort_values(ascending=False)
-
-        s = 0.0
-        features = []
-        for i, (index, val) in enumerate(importance_sorted.items()):
-            if s >= CUMULATIVE_FEATURE_IMPORTANCE or i > FEATURE_IMPORTANCE_CUTOFF:
-                break
-            s += val
-            features.append(index)
-
-        top_important_features = importance_sorted[features]
+        top_important_features = importance_pd.mean(axis=0).sort_values(ascending=False)
 
         feature_importance(
             top_important_features,
@@ -74,8 +70,8 @@ class NNModel(ModelWrapper, ABC):
 
         return top_important_features
 
-    def plot_model(self, path):
-        plot_model(self.model, show_shapes=True, to_file=RESULT_PATH + path + '/' + f'{self.name} model.pdf')
+    def plot_model(self, path, name='model'):
+        plot_model(self.model, show_shapes=True, to_file=RESULT_PATH + path + '/' + f'{self.name} {name}.pdf')
 
     def __init_full_model(self):
         input_length = len(self.feature_cols) + (self.attr_dim*2 if self.attributed else 0)

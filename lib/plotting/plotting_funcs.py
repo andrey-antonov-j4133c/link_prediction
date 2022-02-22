@@ -36,12 +36,15 @@ def feature_importance(top_important_features, name, path=None):
 
     fig, ax = plt.subplots()
 
+    top_important_features = top_important_features.iloc[:FEATURE_IMPORTANCE_CUTOFF]
+    clrs = ['lightcoral' if x in TOPOLOGICAL_FEATURE_NAMES else 'lightskyblue' for x in top_important_features.index]
+
     sns.barplot(
         top_important_features.index,
         top_important_features.values,
         label='Feature importance',
         ax=ax,
-        color='lightcoral',
+        palette=clrs,
         alpha=1
     )
 
@@ -73,6 +76,12 @@ def feature_distribution(feature_df, features, goal='true_quality_label', path=N
     for feature in features:
         figure = plt.figure()
         ax = figure.subplots()
+
+        if good_predictability[feature].min() > 0:
+            good_predictability[feature] -= good_predictability[feature].min()
+
+        if bad_predictability[feature].min() > 0:
+            bad_predictability[feature] -= bad_predictability[feature].min()
 
         sns.histplot(
             good_predictability,
