@@ -49,7 +49,7 @@ def __main__():
         (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
          True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run2'}),
         (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.1;b=0.1;s=0.1;o=0.1_run3'}),
+         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': 'acMark-a=0.3;b=0.1;s=0.1;o=0.1_run3'}),
     ]
 
     exp_types = {
