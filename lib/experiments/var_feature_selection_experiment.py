@@ -94,8 +94,10 @@ class VaryingFeatureSelectionExperiment(FeatureSelectionExperiment):
 
         metrics_arr = [link_prediction_metrics, all_features_metrics]
 
+        step = int((attr_dim*2+len(TOPOLOGICAL_FEATURE_NAMES))/10)
+
         i = 1
-        to = 2
+        to = step
         while to < len(feature_importance):
             features = feature_importance.iloc[:to]
 
@@ -108,7 +110,7 @@ class VaryingFeatureSelectionExperiment(FeatureSelectionExperiment):
 
             metrics_arr.append(selected_features_metrics)
             i += 1
-            to += 2
+            to += step
 
         metrics = pd.DataFrame(metrics_arr)
         metrics.to_csv(RESULT_PATH + path + '/results.csv')
