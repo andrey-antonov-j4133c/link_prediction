@@ -152,9 +152,9 @@ class FeatureSelectionExperiment(Experiment):
         s = 0.0
         most_important_features = []
         for i, (index, val) in enumerate(feature_importance.items()):
-            if s >= CUMULATIVE_FEATURE_IMPORTANCE or val <= 0:
+            if s >= CUMULATIVE_FEATURE_IMPORTANCE:
                 break
-            s += val
+            s += math.fabs(val)
             most_important_features.append(index)
 
         classification_model_selected_features,\
