@@ -84,10 +84,12 @@ class NNModel(ModelWrapper, ABC):
             node_1_attrs = l.Lambda(lambda x: x[:, len(self.feature_cols):len(self.feature_cols)+self.attr_dim])(input)
             node_2_attrs = l.Lambda(lambda x: x[:, len(self.feature_cols) + self.attr_dim:])(input)
 
-            node_1_embed = l.Dense(EMBED_DIM, activation='relu', name='Node_one_embed')(node_1_attrs)
-            node_2_embed = l.Dense(EMBED_DIM, activation='relu', name='Node_two_embed')(node_2_attrs)
-
-            concat = l.Concatenate()([features, node_1_embed, node_2_embed])
+            if EMBED_DIM < self.attr_dim:
+                node_1_embed = l.Dense(EMBED_DIM, activation='relu', name='Node_one_embed')(node_1_attrs)
+                node_2_embed = l.Dense(EMBED_DIM, activation='relu', name='Node_two_embed')(node_2_attrs)
+                concat = l.Concatenate()([features, node_1_embed, node_2_embed])
+            else:
+                concat = l.Concatenate()([features, node_1_attrs, node_2_attrs])
             hidden = l.Dense(32, activation='relu', name='Hidden_layer')(concat)
         else:
             hidden = l.Dense(32, activation='relu', name='Hidden_layer')(input)

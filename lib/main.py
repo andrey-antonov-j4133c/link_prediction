@@ -2,6 +2,7 @@ import logging as log
 import os
 import shutil
 import ray
+from multiprocessing import Process
 
 from experiments.var_feature_selection_experiment import VaryingFeatureSelectionExperiment
 from models.nn_model import NNModel
@@ -17,7 +18,7 @@ from experiments.experiment import Experiment
 from experiments.feature_selection_experiment import FeatureSelectionExperiment
 
 
-def __main__():
+def run_experiments():
     ray.init()
 
     if VEBROSE:
@@ -26,7 +27,7 @@ def __main__():
     else:
         log.basicConfig(format="%(levelname)s: %(message)s")
 
-    #if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
+    # if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
     #    shutil.rmtree(RESULT_PATH)
 
     data = []
@@ -38,30 +39,30 @@ def __main__():
                  True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a={a};b=0.1;s=0.1;o=0.1_run{run}'})
             )
 
-    #data.append(
+    # data.append(
     #    (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
     #     True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a=0.5;b=0.1;s=0.1;o=0.1_run1'})
-    #)
+    # )
 
-    #data.append(
+    # data.append(
     #    (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
     #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
-    #)
+    # )
 
-    #data.append(
+    # data.append(
     #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
     #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
-    #)
+    # )
 
-    #data.append(
+    # data.append(
     #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
     #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'dblp'})
-    #)
+    # )
 
-    #data.append(
+    # data.append(
     #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
     #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'pubmed'})
-    #)
+    # )
 
     exp_types = {
         Experiment: "Legacy",
@@ -92,4 +93,16 @@ def __main__():
             log.warning(f'The path\n{experiment_path}\nSeems to already exist, skipping...')
 
 
-__main__()
+def main():
+    t = Process(target=run_experiments)
+    t.start()
+    while True:
+        choice = input()
+        if choice == "s":
+            t.terminate()
+            ray.shutdown()
+            raise SystemExit
+
+
+if __name__ == '__main__':
+    main()
