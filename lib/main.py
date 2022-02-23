@@ -34,34 +34,34 @@ def __main__():
     for a in ('0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1'):
         for run in (1, 2, 3, 4, 5):
             data.append(
-                (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+                (SyntheticFormatter, Experiment, NNModel,
                  True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a={a};b=0.1;s=0.1;o=0.1_run{run}'})
             )
 
-    data.append(
-        (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a=0.5;b=0.1;s=0.1;o=0.1_run1'})
-    )
+    #data.append(
+    #    (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
+    #     True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a=0.5;b=0.1;s=0.1;o=0.1_run1'})
+    #)
 
-    data.append(
-        (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
-    )
+    #data.append(
+    #    (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
+    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
+    #)
 
-    data.append(
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
-    )
+    #data.append(
+    #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
+    #)
 
-    data.append(
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
-    )
+    #data.append(
+    #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'dblp'})
+    #)
 
-    data.append(
-        (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'pubmed'})
-    )
+    #data.append(
+    #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
+    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'pubmed'})
+    #)
 
     exp_types = {
         Experiment: "Legacy",

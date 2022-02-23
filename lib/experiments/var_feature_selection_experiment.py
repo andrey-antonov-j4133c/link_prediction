@@ -13,7 +13,7 @@ from plotting.plotting_funcs import plot_auc, feature_distribution
 from settings import *
 
 
-class VaryingFeatureSelectionExperiment(FeatureSelectionExperiment):
+class VaryingFeatureSelectionExperiment(Experiment):
     def __init__(self, generator: formatter, model):
         super().__init__(generator, model)
 
