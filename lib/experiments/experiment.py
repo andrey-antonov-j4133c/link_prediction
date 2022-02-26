@@ -16,6 +16,17 @@ class Experiment:
         self.model_cls = model
 
     def get_attributes(self, dfs, attrs_dict, attr_dim):
+        def sample_inexes(size, frac):
+            return np.random.randint(low=0, high=size, size=int(size * frac), dtype=int)
+        def sample(frm, indices):
+            return tuple([frm[i] for i in indices])
+
+        if SAMPLE_ATTRIBUTES:
+            indexes = sample_inexes(attr_dim, SAMPLE_RATIO)
+            for key in attrs_dict.keys():
+                attrs_dict[key] = sample(attrs_dict[key], indexes)
+            attr_dim = int(attr_dim*SAMPLE_RATIO)
+
         for i in range(len(dfs)):
             for j in range(attr_dim):
                 dfs[i][f'node_1_attr_{j}'] = dfs[i]['node1'].apply(lambda x: attrs_dict[x][j])
@@ -92,6 +103,9 @@ class Experiment:
                 attributes['attrs'].to_dict(),
                 attr_dim
             )
+
+            if SAMPLE_ATTRIBUTES:
+                attr_dim = int(attr_dim*SAMPLE_RATIO)
 
         # PART 2 -- models invocation
         link_prediction_model = self.model_cls(
