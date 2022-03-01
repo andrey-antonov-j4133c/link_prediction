@@ -27,7 +27,7 @@ class GBModel(ModelWrapper, ABC):
     def fit(self, node_df, y_col):
         self.model.fit(node_df[self.feature_cols].values, node_df[y_col].values)
 
-    def predict(self, node_df):
+    def predict(self, node_df, path=None):
         return self.model.predict_proba(node_df[self.feature_cols].values)[:, 1]
 
     def feature_importance(self, train_samples, test_samples, path):
@@ -41,17 +41,9 @@ class GBModel(ModelWrapper, ABC):
             shap_values[0],
             columns=self.feature_cols)
 
-        importance_sorted = importance_pd.mean(axis=0).sort_values(ascending=False)
-
-        s = 0.0
-        features = []
-        for i, (index, val) in enumerate(importance_sorted.items()):
-            if s >= CUMULATIVE_FEATURE_IMPORTANCE or i > FEATURE_IMPORTANCE_CUTOFF:
-                break
-            s += val
-            features.append(index)
-
-        top_important_features = importance_sorted[features]
+        top_important_features = importance_pd.mean(axis=0).sort_values(ascending=False)
+        top_important_features = top_important_features \
+            .reindex(top_important_features.map(lambda x: x).abs().sort_values(ascending=False).index)
 
         feature_importance(
             top_important_features,
