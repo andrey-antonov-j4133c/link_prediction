@@ -1,3 +1,4 @@
+import time
 from abc import ABC
 from models.model_wrapper import ModelWrapper
 
@@ -28,7 +29,12 @@ class GBModel(ModelWrapper, ABC):
         self.model.fit(node_df[self.feature_cols].values, node_df[y_col].values)
 
     def predict(self, node_df, path=None):
-        return self.model.predict_proba(node_df[self.feature_cols].values)[:, 1]
+        stat = time.time()
+        res = self.model.predict_proba(node_df[self.feature_cols].values)[:, 1]
+        end = time.time()
+        if path:
+            pd.DataFrame({"Predict time": [end - stat]}).to_csv(RESULT_PATH + path + '/' + f'predict_time_for_{self.name}.csv')
+        return res
 
     def feature_importance(self, train_samples, test_samples, path):
         def f(X):
