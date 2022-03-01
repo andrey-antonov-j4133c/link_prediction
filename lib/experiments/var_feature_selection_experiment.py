@@ -94,7 +94,10 @@ class VaryingFeatureSelectionExperiment(Experiment):
 
         metrics_arr = [link_prediction_metrics, all_features_metrics]
 
-        step = int((attr_dim*2+len(TOPOLOGICAL_FEATURE_NAMES))/10)
+        if attributed:
+            step = int((attr_dim*2+len(TOPOLOGICAL_FEATURE_NAMES))/10)
+        else:
+            step = 1
 
         i = 1
         to = step
