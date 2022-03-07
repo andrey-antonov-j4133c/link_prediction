@@ -162,14 +162,9 @@ class CustomDataGen(Sequence):
     def __getitem__(self, index):
         node_batch = self.node_df.iloc[index:index + self.batch_size]
 
-        if self.y_col:
-            return (node_batch[self.feature_cols].values,
-                    np.array(node_batch['node1_attrs'].values.tolist()),
-                    np.array(node_batch['node2_attrs'].values.tolist())), node_batch[self.y_col].values
-        else:
-            return (node_batch[self.feature_cols].values,
-                    np.array(node_batch['node1_attrs'].values.tolist()),
-                    np.array(node_batch['node2_attrs'].values.tolist())), None
+        X = node_batch[self.__get_cols()].values
+        y = node_batch[self.y_col].values if self.y_col else None
+        return X, y
 
     def __len__(self):
         n = int(len(self.node_df) / self.batch_size)

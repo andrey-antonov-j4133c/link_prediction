@@ -27,8 +27,8 @@ def run_experiments():
     else:
         log.basicConfig(format="%(levelname)s: %(message)s")
 
-    # if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
-    #    shutil.rmtree(RESULT_PATH)
+    if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
+        shutil.rmtree(RESULT_PATH)
 
     data = []
 
@@ -64,6 +64,9 @@ def run_experiments():
     #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'pubmed'})
     # )
 
+    data = [(RealWorldNonAttrFormatter, Experiment, GBModel,
+            False, {'dataset_name': '595b15bd549f067e0263b525'})]
+
     exp_types = {
         Experiment: "Legacy",
         FeatureSelectionExperiment: "Feature selection",
@@ -75,7 +78,7 @@ def run_experiments():
         experiment_path = f"{args['dataset_name']}, attributed is {attributed}, model: {model.MODEL_TYPE}, exp: {exp_type}"
 
         if not os.path.isdir(RESULT_PATH + experiment_path + '/'):
-            try:
+            #try:
                 os.makedirs(RESULT_PATH + experiment_path + '/')
 
                 log.info('STARTING EXPERIMENT')
@@ -83,12 +86,12 @@ def run_experiments():
 
                 e = experiment(formatter(args, attributed), model)
                 e.run(attributed, experiment_path)
-            except BaseException as e:
-                log.error(e)
-                log.error("Failed to compute, try again later")
+            #except BaseException as e:
+            #    log.error(e)
+            #    log.error("Failed to compute, try again later")
 
-                if os.path.exists(experiment_path) and os.path.isdir(experiment_path):
-                    shutil.rmtree(experiment_path)
+            #    if os.path.exists(experiment_path) and os.path.isdir(experiment_path):
+            #        shutil.rmtree(experiment_path)
         else:
             log.warning(f'The path\n{experiment_path}\nSeems to already exist, skipping...')
 
