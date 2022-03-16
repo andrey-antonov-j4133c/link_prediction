@@ -10,14 +10,18 @@ from data_formatting.synthetic_networks import SyntheticFormatter
 
 from settings import *
 
-datasets = []
+data = []
 
 for a in ('0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1'):
     for run in (1, 2, 3, 4, 5):
-        datasets.append(
+        data.append(
             (SyntheticFormatter, True,
              {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a={a};b=0.1;s=0.1;o=0.1_run{run}'})
         )
+
+data.append(
+    (RealWorldAttrFormatter, True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer.npz'})
+)
 
 
 def __main__():
@@ -32,7 +36,7 @@ def __main__():
     if not os.path.isdir(PRE_COMPUTED_PATH):
         os.makedirs(PRE_COMPUTED_PATH)
 
-    for formatter_cls, attributed, args in datasets:
+    for formatter_cls, attributed, args in data:
         data_path = PRE_COMPUTED_PATH + args['dataset_name'] + '/'
 
         if not os.path.isdir(data_path):

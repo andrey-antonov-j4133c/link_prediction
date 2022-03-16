@@ -20,6 +20,8 @@ beta = [0.1]
 sigma = [0.1]
 omega = [0.1]
 
+RUN = list(range(1, 6))
+
 # ========FIXED PARAMS=========
 n = 5000
 m = 2 ** (10 + 5)

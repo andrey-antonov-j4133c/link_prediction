@@ -27,9 +27,6 @@ def run_experiments():
     else:
         log.basicConfig(format="%(levelname)s: %(message)s")
 
-    if os.path.exists(RESULT_PATH) and os.path.isdir(RESULT_PATH):
-        shutil.rmtree(RESULT_PATH)
-
     data = []
 
     for a in ('0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1'):
@@ -39,33 +36,20 @@ def run_experiments():
                  True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a={a};b=0.1;s=0.1;o=0.1_run{run}'})
             )
 
-    # data.append(
-    #    (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
-    #     True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a=0.5;b=0.1;s=0.1;o=0.1_run1'})
-    # )
+    data.append(
+       (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
+        True, {'path': DATA_PATH + 'synthetic/acMark/', 'dataset_name': f'acMark-a=0.5;b=0.1;s=0.1;o=0.1_run1'})
+    )
 
-    # data.append(
-    #    (SyntheticFormatter, VaryingFeatureSelectionExperiment, NNModel,
-    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
-    # )
+    data.append(
+        (RealWorldNonAttrFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/OLP/', 'dataset_name': f'595b15bd549f067e0263b525'})
+    )
 
-    # data.append(
-    #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer'})
-    # )
-
-    # data.append(
-    #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'dblp'})
-    # )
-
-    # data.append(
-    #    (SyntheticFormatter, FeatureSelectionExperiment, NNModel,
-    #     True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'pubmed'})
-    # )
-
-    data = [(RealWorldNonAttrFormatter, Experiment, GBModel,
-            False, {'dataset_name': '595b15bd549f067e0263b525'})]
+    data.append(
+        (RealWorldAttrFormatter, FeatureSelectionExperiment, NNModel,
+         True, {'path': DATA_PATH + 'real_world_data/', 'dataset_name': f'citeseer.npz'})
+    )
 
     exp_types = {
         Experiment: "Legacy",
@@ -78,7 +62,7 @@ def run_experiments():
         experiment_path = f"{args['dataset_name']}, attributed is {attributed}, model: {model.MODEL_TYPE}, exp: {exp_type}"
 
         if not os.path.isdir(RESULT_PATH + experiment_path + '/'):
-            #try:
+            try:
                 os.makedirs(RESULT_PATH + experiment_path + '/')
 
                 log.info('STARTING EXPERIMENT')
@@ -86,12 +70,12 @@ def run_experiments():
 
                 e = experiment(formatter(args, attributed), model)
                 e.run(attributed, experiment_path)
-            #except BaseException as e:
-            #    log.error(e)
-            #    log.error("Failed to compute, try again later")
+            except BaseException as e:
+                log.error(e)
+                log.error("Failed to compute, try again later")
 
-            #    if os.path.exists(experiment_path) and os.path.isdir(experiment_path):
-            #        shutil.rmtree(experiment_path)
+                if os.path.exists(experiment_path) and os.path.isdir(experiment_path):
+                    shutil.rmtree(experiment_path)
         else:
             log.warning(f'The path\n{experiment_path}\nSeems to already exist, skipping...')
 
